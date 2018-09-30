@@ -10,6 +10,7 @@
 namespace CrCms\Foundation\MicroService\Client;
 
 use CrCms\Foundation\MicroService\Client\Contracts\Selector;
+use CrCms\Foundation\MicroService\Client\Contracts\ServiceContract;
 use CrCms\Foundation\MicroService\Client\Drivers\Restful;
 use CrCms\Foundation\MicroService\Client\Selectors\RandSelector;
 use CrCms\Foundation\MicroService\Client\ServiceDiscover;
@@ -26,7 +27,7 @@ class MicroServiceClientProvider extends ServiceProvider
     /**
      * @var bool
      */
-    protected $defer = true;
+    protected $defer = false;
 
     /**
      * @var string
@@ -69,7 +70,7 @@ class MicroServiceClientProvider extends ServiceProvider
     protected function registerServices(): void
     {
         // @todo 应该有一个封装好的工厂方法，先这样吧
-        $this->app->bind(RpcContract::class, function ($app) {
+        $this->app->bind(ServiceContract::class, function ($app) {
             $driver = $app->make('config')->get('micro-service.connections.consul.driver');
             switch ($driver['name']) {
                 case 'restful':

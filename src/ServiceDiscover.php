@@ -3,7 +3,7 @@
 namespace CrCms\Foundation\MicroService\Client;
 
 use CrCms\Foundation\Client\Manager;
-use CrCms\Foundation\MicroService\Client\Contracts\Selector;
+use CrCms\Foundation\MicroService\Client\Contracts\SelectorContract;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
 use Illuminate\Foundation\Application;
 use Exception;
@@ -26,7 +26,7 @@ class ServiceDiscover implements ServiceDiscoverContract
     protected $services = [];
 
     /**
-     * @var Selector
+     * @var SelectorContract
      */
     protected $selector;
 
@@ -41,7 +41,7 @@ class ServiceDiscover implements ServiceDiscoverContract
      * @param Selector $selector
      * @param Manager $manager
      */
-    public function __construct(Application $app, Selector $selector, Manager $manager)
+    public function __construct(Application $app, SelectorContract $selector, Manager $manager)
     {
         $this->app = $app;
         $this->selector = $selector;
@@ -74,8 +74,12 @@ class ServiceDiscover implements ServiceDiscoverContract
      */
     protected function services(string $service, string $driver): array
     {
-        $config = $this->app->make('config')->get("rpc.connections.{$driver}.discovery");
-        $this->client->connection($driver);
+        $config = $this->app->make('config')->get("micro-service-client.connections.{$driver}.discovery");
+        $this->client->connection([
+            'driver' => 'http',
+            'host' => $config['host'],
+            'port' => $config['port'],
+        ], false);
         try {
             $content = $this->client->request($config['uri'] . '/' . $service, ['method' => 'get'])->getContent();
             // @todo 这里还需要其它的判断，判断Client是否OK，JSON解析是否OK
