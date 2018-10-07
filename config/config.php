@@ -6,32 +6,29 @@ return [
 
     'connections' => [
         'consul' => [
-            'discovery' => [
-                'host' => '192.168.1.12',
+            'discover' => [
+                'driver' => 'http',
+                'host' => '192.168.1.106',
                 'port' => 8500,
                 'uri' => 'v1/catalog/service',
-                'services' => [
-                    'assistant',
-                ],
             ],
-            'driver' => [
-                'name' => 'restful',
-                'headers' => [
-                    'User-Agent' => 'CRCMS-MICRO-SERVER PHP Client',
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                ]
+            'services' => [
+                'test',
             ],
+            'client' => 'restful',//or
+            /*'client' => [
+                'name' => 'restful'
+            ]*/
         ],
     ],
 
 
     /*
     |--------------------------------------------------------------------------
-    | Connection pool selector
+    | Services selector
     |--------------------------------------------------------------------------
     |
-    | Different selectors can be selected to select the connection in the connection pool
+    | Different selectors can be selected to select connections for multiple services in service discovery
     | RandSelector: Randomly select an available selector
     | RingSelector: A ring selector to ensure scheduling equalization
     | ResidentSelector: Always use the same available selector

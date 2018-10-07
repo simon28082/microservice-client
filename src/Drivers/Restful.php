@@ -15,12 +15,12 @@ class Restful implements ServiceContract
      * @var array
      */
     protected $headers = [
-        'User-Agent' => 'CRCMS-JSON-RPC PHP Client',
+        'User-Agent' => 'CRCMS-MICRO-SERVER PHP Client',
         'Content-Type' => 'application/json',
         'Accept' => 'application/json',
     ];
 
-    protected $method = 'post';
+    protected $method = 'get';
 
     protected $client;
 
@@ -64,7 +64,7 @@ class Restful implements ServiceContract
             'name' => $service['ServiceName'],
             'driver' => 'http',
             'host' => $service['ServiceAddress'],
-            'port' => 80,
+            'port' => $service['ServicePort'],
             'settings' => [
                 'timeout' => 1,
                 //'ssl' => env('PASSPORT_SSL', true),

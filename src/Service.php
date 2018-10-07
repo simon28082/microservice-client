@@ -68,7 +68,9 @@ class Service
      */
     public function call(string $name, ?string $uri = null, array $params = [])
     {
-        $service = $this->serviceDiscover->discover($name, 'consul');
+        $name = explode('.', $name);
+        list($name, $driver) = [$name[1] ?? $name[0], $name[1] ?? null];
+        $service = $this->serviceDiscover->discover($name, $driver);
         $this->client = $this->whileGetConnection($service, $uri, $params);
 
         $this->resolveData($this->client->getContent());
@@ -165,6 +167,9 @@ class Service
      */
     public function __call(string $name, array $arguments)
     {
+//        if (method_exists($this->service,$name)) {
+//            return call_user_func_array([$this->service,$name],$arguments);
+//        }
         return $this->call($name, ...$arguments);
         //throw new BadMethodCallException("The method[{$name}] is not exists");
     }

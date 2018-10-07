@@ -74,12 +74,28 @@ class ServiceDiscover implements ServiceDiscoverContract
      */
     protected function services(string $service, string $driver): array
     {
-        $config = $this->app->make('config')->get("micro-service-client.connections.{$driver}.discovery");
+        $services = $this->builtInServices($service, $driver);
+        if (empty($services)) {
+            $services = $this->discoverServices($service, $driver);
+        }
+
+        return $services;
+    }
+
+    /**
+     * @param string $service
+     * @param string $driver
+     * @return array
+     * @throws Exception
+     */
+    protected function discoverServices(string $service, string $driver): array
+    {
         $this->client->connection([
-            'driver' => 'http',
+            'driver' => $config['driver'],
             'host' => $config['host'],
             'port' => $config['port'],
         ], false);
+
         try {
             $content = $this->client->request($config['uri'] . '/' . $service, ['method' => 'get'])->getContent();
             // @todo 这里还需要其它的判断，判断Client是否OK，JSON解析是否OK
@@ -100,6 +116,20 @@ class ServiceDiscover implements ServiceDiscoverContract
     /**
      * @param string $service
      * @param string $driver
+     * @return array
+     */
+    protected function builtInServices(string $service, string $driver): array
+    {
+        $services = $this->app->make('config')->get("micro-service-client.connections.{$driver}.services");
+        if (count($services) !== count($services, COUNT_RECURSIVE)) {
+            return $services;
+        }
+        return [];
+    }
+
+    /**
+     * @param string $service
+     * @param string $driver
      * @return string
      */
     protected function serviceKey(string $service, string $driver): string
@@ -112,6 +142,6 @@ class ServiceDiscover implements ServiceDiscoverContract
      */
     protected function defaultDriver(): string
     {
-        return $this->app->make('config')->get('rpc.default');
+        return $this->app->make('config')->get('micro-service-client.default');
     }
 }
