@@ -5,6 +5,8 @@ namespace CrCms\Foundation\MicroService\Client;
 use CrCms\Foundation\Client\Manager;
 use CrCms\Foundation\MicroService\Client\Contracts\SelectorContract;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
+use Illuminate\Cache\CacheManager;
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Foundation\Application;
 use Exception;
 use UnexpectedValueException;
@@ -36,16 +38,23 @@ class ServiceDiscover implements ServiceDiscoverContract
     protected $client;
 
     /**
+     * @var Repository
+     */
+    protected $cache;
+
+    /**
      * ServiceDiscover constructor.
      * @param Application $app
-     * @param Selector $selector
+     * @param SelectorContract $selector
      * @param Manager $manager
+     * @param Repository $cache
      */
     public function __construct(Application $app, SelectorContract $selector, Manager $manager)
     {
         $this->app = $app;
         $this->selector = $selector;
         $this->client = $manager;
+        $this->cache = $app->make(Repository::class);
     }
 
     /**
@@ -90,6 +99,13 @@ class ServiceDiscover implements ServiceDiscoverContract
      */
     protected function discoverServices(string $service, string $driver): array
     {
+        $serviceKey = $this->serviceKey($service, $driver);
+        if ($this->cache->has($serviceKey)) {
+            return $this->cache->get($serviceKey);
+        }
+
+        $config = $this->app->make('config')->get("micro-service-client.connections.{$driver}.discover");
+
         $this->client->connection([
             'driver' => $config['driver'],
             'host' => $config['host'],
@@ -103,9 +119,13 @@ class ServiceDiscover implements ServiceDiscoverContract
             if (json_last_error() !== 0) {
                 throw new UnexpectedValueException("JSON parse error");
             }
-            return collect($content)->mapWithKeys(function ($item) {
+            $result = collect($content)->mapWithKeys(function ($item) {
                 return [$item['ServiceID'] => $item];
             })->toArray();
+
+            $this->cache->put($serviceKey, $result, $this->app->make('config')->get("micro-service-client.discover_refresh_time", 5));
+
+            return $result;
         } catch (Exception $exception) {
             throw $exception;
         } finally {

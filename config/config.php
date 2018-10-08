@@ -1,8 +1,23 @@
 <?php
 
 return [
+    /*
+    |--------------------------------------------------------------------------
+    | Default connection name
+    |--------------------------------------------------------------------------
+    |
+    */
 
     'default' => 'consul',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Service Connections
+    |--------------------------------------------------------------------------
+    |
+    | The default remote discovery of available services will be cached for efficiency
+    |
+    */
 
     'connections' => [
         'consul' => [
@@ -22,6 +37,16 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Service discovery refresh time(Minute)
+    |--------------------------------------------------------------------------
+    |
+    | The default remote discovery of available services will be cached for efficiency
+    |
+    */
+
+    'discover_refresh_time' => 5,
 
     /*
     |--------------------------------------------------------------------------

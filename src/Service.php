@@ -15,8 +15,11 @@ use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
 use BadMethodCallException;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceContract;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
+use CrCms\Foundation\MicroService\Client\ServiceFactory;
+use Illuminate\Contracts\Container\Container;
 use stdClass;
 use InvalidArgumentException;
+use DomainException;
 
 /**
  * Class Service
@@ -52,12 +55,50 @@ class Service
     protected $data;
 
     /**
-     * Rpc constructor.
+     * @var ServiceFactory
      */
-    public function __construct(ServiceDiscoverContract $serviceDiscover, ServiceContract $service)
+    protected $factory;
+
+    /**
+     * @var string
+     */
+    protected $driver;
+
+    /**
+     * @var Container
+     */
+    protected $app;
+
+    /**
+     * Service constructor.
+     * @param Container $container
+     * @param ServiceDiscoverContract $serviceDiscover
+     * @param ServiceFactory $factory
+     */
+    public function __construct(Container $container, ServiceDiscoverContract $serviceDiscover, ServiceFactory $factory)
     {
+        $this->app = $container;
         $this->serviceDiscover = $serviceDiscover;
-        $this->service = $service;
+        $this->factory = $factory;
+        $this->driver();
+    }
+
+    /**
+     * @param null|string $driver
+     * @return Service
+     */
+    public function driver(?string $driver = null): Service
+    {
+        $driver = $driver ? $driver : $this->app->make('config')->get('micro-service-client.default');
+
+        $connections = array_keys($this->app->make('config')->get("micro-service-client.connections"));
+        if (!in_array($driver, $connections, true)) {
+            throw new DomainException("The Driver[{$driver}] not exists");
+        }
+
+        $this->driver = $driver;
+
+        return $this;
     }
 
     /**
@@ -68,10 +109,10 @@ class Service
      */
     public function call(string $name, ?string $uri = null, array $params = [])
     {
-        $name = explode('.', $name);
-        list($name, $driver) = [$name[1] ?? $name[0], $name[1] ?? null];
-        $service = $this->serviceDiscover->discover($name, $driver);
-        $this->client = $this->whileGetConnection($service, $uri, $params);
+        $this->client = $this->whileGetConnection(
+            $this->serviceDiscover->discover($name, $this->driver),
+            $uri, $params
+        );
 
         $this->resolveData($this->client->getContent());
 
@@ -88,17 +129,6 @@ class Service
         } else {
             $this->data = null;
         }
-
-        /*if (is_array($data)) {
-            $this->data = (object)$data;
-        } else if ((bool)($newData = json_decode($data)) && json_last_error() === 0) {
-            $this->data = $newData;
-        } else if (is_serialized($data)) {
-            $this->data = unserialize($data);
-        } else {
-            $this->data = new stdClass();
-            $this->data->data = $data;
-        }*/
     }
 
     /**
@@ -138,13 +168,25 @@ class Service
     protected function whileGetConnection(array $service, string $uri, array $params = [], int $depth = 1): Manager
     {
         try {
-            return $this->service->call($service, $uri, $params);
+            return $this->service()->call($service, $uri, $params);
         } catch (ConnectionException $exception) {
             if ($depth > $this->retry) {
                 throw $exception;
             }
             return $this->whileGetConnection($service, $uri, $params, $depth += 1);
         }
+    }
+
+    /**
+     * @return ServiceContract
+     */
+    protected function service(): ServiceContract
+    {
+        if (!$this->service instanceof ServiceContract) {
+            $this->service = $this->factory->make($this->driver);
+        }
+
+        return $this->service;
     }
 
     /**
@@ -167,9 +209,14 @@ class Service
      */
     public function __call(string $name, array $arguments)
     {
-//        if (method_exists($this->service,$name)) {
-//            return call_user_func_array([$this->service,$name],$arguments);
-//        }
+        if (method_exists($this->service(), $name)) {
+            $result = call_user_func_array([$this->service(), $name], $arguments);
+            if ($result instanceof ServiceContract) {
+                $this->service = $result;
+                return $this;
+            }
+        }
+
         return $this->call($name, ...$arguments);
         //throw new BadMethodCallException("The method[{$name}] is not exists");
     }
