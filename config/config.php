@@ -23,14 +23,14 @@ return [
         'consul' => [
             'discover' => [
                 'driver' => 'http',
-                'host' => '192.168.1.106',
-                'port' => 8500,
+                'host' => env('SERVICE_DISCOVER_HOST', null),
+                'port' => env('SERVICE_DISCOVER_PORT', 8500),
                 'uri' => 'v1/catalog/service',
             ],
             'services' => [
                 'test',
             ],
-            'client' => 'restful',//or
+            'client' => env('SERVICE_CLIENT_DRIVER', 'restful'),//or
             /*'client' => [
                 'name' => 'restful'
             ]*/
