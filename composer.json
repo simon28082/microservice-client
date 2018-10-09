@@ -1,7 +1,7 @@
 {
     "name": "crcms/micro-service-client",
-    "description": "CRCMS client",
-	"keywords": ["micro-service", "service", "crcms"],
+    "description": "CRCMS Micro Service",
+	"keywords": ["micro-service", "service", "crcms", "rpc"],
 	"homepage": "https://github.com/crcms/micro-service-client",
     "license": "MIT",
     "require": {
