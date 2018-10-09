@@ -8,7 +8,7 @@ return [
     |
     */
 
-    'default' => 'consul',
+    'default' => env('SERVICE_CONNECTION_DRIVER', 'consul'),
 
     /*
     |--------------------------------------------------------------------------
@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'client' => env('SERVICE_CLIENT_DRIVER', 'restful'),//or
+    'client' => env('SERVICE_CLIENT_DRIVER', 'restful'),
 
     /*
     |--------------------------------------------------------------------------
@@ -52,7 +52,7 @@ return [
     | clients.*.options client.php|client/config.php connections.*.settings
     |
     */
-    
+
     'clients' => [
         'restful' => [
             'name' => 'restful',
@@ -72,7 +72,18 @@ return [
     |
     */
 
-    'discover_refresh_time' => 5,
+    'discover_refresh_time' => env('SERVICE_DISCOVER_REFRESH_TIME', 5),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Interactive authentication key
+    |--------------------------------------------------------------------------
+    |
+    | The hash value used to generate data interaction between services
+    |
+    */
+    
+    'secret' => env('SERVICE_SECRET', null),
 
     /*
     |--------------------------------------------------------------------------

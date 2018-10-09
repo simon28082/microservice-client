@@ -126,7 +126,7 @@ class Service
     {
         $driver = $driver ? $driver : $this->app->make('config')->get('micro-service-client.client');
 
-        $connections = array_keys($this->app->make('config')->get("micro-service-client.clients"));
+        $connections = array_keys($this->app->make('config')->get('micro-service-client.clients'));
         if (!in_array($driver, $connections, true)) {
             throw new DomainException("The Driver[{$driver}] not exists");
         }
@@ -149,12 +149,15 @@ class Service
     }
 
     /**
-     * @param string $key
-     * @param string $passowrd
-     * @return ServiceContract
+     * @param array $params
+     * @return string
      */
-    public function auth(string $key, string $passowrd = ''): ServiceContract
+    public function secret(array $params): string
     {
+        return hash_hmac(
+            'ripemd256', serialize($params),
+            (string)$this->app->make('config')->get('micro-service-client.secret')
+        );
     }
 
     /**
@@ -185,7 +188,7 @@ class Service
     protected function whileGetConnection(array $service, string $uri, array $params = [], int $depth = 1): Manager
     {
         try {
-            return $this->service()->call($service, $uri, $params);
+            return $this->service()->auth($this->secret($params))->call($service, $uri, $params);
         } catch (ConnectionException $exception) {
             if ($depth > $this->retry) {
                 throw $exception;

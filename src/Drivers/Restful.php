@@ -119,6 +119,7 @@ class Restful implements ServiceContract
      */
     public function auth(string $key, string $password = ''): ServiceContract
     {
-        // TODO: Implement authentication() method.
+        $this->headers['Authorization'] = $key;
+        return $this;
     }
 }
