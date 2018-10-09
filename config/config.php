@@ -12,10 +12,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Default client driver
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'client' => env('SERVICE_CLIENT_DRIVER', 'restful'),//or
+
+    /*
+    |--------------------------------------------------------------------------
     | Service Connections
     |--------------------------------------------------------------------------
     |
     | The default remote discovery of available services will be cached for efficiency
+    | *.discover.driver client.php|client/config.php connections
     |
     */
 
@@ -30,11 +40,27 @@ return [
             'services' => [
                 'test',
             ],
-            'client' => env('SERVICE_CLIENT_DRIVER', 'restful'),//or
-            /*'client' => [
-                'name' => 'restful'
-            ]*/
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Service request client
+    |--------------------------------------------------------------------------
+    |
+    | clients.*.driver client.php|client/config.php connections
+    | clients.*.options client.php|client/config.php connections.*.settings
+    |
+    */
+    
+    'clients' => [
+        'restful' => [
+            'name' => 'restful',
+            'driver' => 'http',
+            'options' => [
+                'timeout' => 1,
+            ],
+        ]
     ],
 
     /*

@@ -65,6 +65,11 @@ class Service
     protected $driver;
 
     /**
+     * @var string
+     */
+    protected $connection;
+
+    /**
      * @var Container
      */
     protected $app;
@@ -81,22 +86,16 @@ class Service
         $this->serviceDiscover = $serviceDiscover;
         $this->factory = $factory;
         $this->driver();
+        $this->connection();
     }
 
     /**
-     * @param null|string $driver
-     * @return Service
+     * @param null|string $name
+     * @return $this
      */
-    public function driver(?string $driver = null): Service
+    public function connection(?string $name = null)
     {
-        $driver = $driver ? $driver : $this->app->make('config')->get('micro-service-client.default');
-
-        $connections = array_keys($this->app->make('config')->get("micro-service-client.connections"));
-        if (!in_array($driver, $connections, true)) {
-            throw new DomainException("The Driver[{$driver}] not exists");
-        }
-
-        $this->driver = $driver;
+        $this->connection = $name ? $name : $this->app->make('config')->get('micro-service-client.default');
 
         return $this;
     }
@@ -110,13 +109,31 @@ class Service
     public function call(string $name, ?string $uri = null, array $params = [])
     {
         $this->client = $this->whileGetConnection(
-            $this->serviceDiscover->discover($name, $this->driver),
+            $this->serviceDiscover->discover($name, $this->connection),
             $uri, $params
         );
 
         $this->resolveData($this->client->getContent());
 
         return $this->getData();
+    }
+
+    /**
+     * @param null|string $driver
+     * @return Service
+     */
+    public function driver(?string $driver = null): Service
+    {
+        $driver = $driver ? $driver : $this->app->make('config')->get('micro-service-client.client');
+
+        $connections = array_keys($this->app->make('config')->get("micro-service-client.clients"));
+        if (!in_array($driver, $connections, true)) {
+            throw new DomainException("The Driver[{$driver}] not exists");
+        }
+
+        $this->driver = $driver;
+
+        return $this;
     }
 
     /**

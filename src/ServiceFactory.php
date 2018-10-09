@@ -33,9 +33,9 @@ class ServiceFactory
      */
     public function make(string $driver): ServiceContract
     {
-        $config = $this->app->make('config')->get("micro-service-client.connections.{$driver}");
+        $config = $this->app->make('config')->get("micro-service-client.clients.{$driver}");
 
-        switch ($config['client']) {
+        switch ($config['name']) {
             case 'restful':
                 return new Restful($this->app->make('client.manager'), $config);
         }
