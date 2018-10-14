@@ -14,7 +14,6 @@ use CrCms\Foundation\MicroService\Client\Contracts\ServiceContract;
 use CrCms\Foundation\MicroService\Client\Drivers\Restful;
 use CrCms\Foundation\MicroService\Client\Selectors\RandSelector;
 use CrCms\Foundation\MicroService\Client\ServiceDiscover;
-use CrCms\Foundation\MicroService\Server\Commands\ServiceRegisterCommand;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
 use CrCms\Foundation\MicroService\Client\ServiceFactory;
 use Illuminate\Support\ServiceProvider;
@@ -88,7 +87,6 @@ class MicroServiceClientProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        $this->commands(ServiceRegisterCommand::class);
     }
 
     /**
@@ -108,7 +106,6 @@ class MicroServiceClientProvider extends ServiceProvider
         return [
             ServiceDiscoverContract::class,
             Selector::class,
-            ServiceRegisterCommand::class,
         ];
     }
 }
