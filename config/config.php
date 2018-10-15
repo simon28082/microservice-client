@@ -38,7 +38,12 @@ return [
                 'uri' => 'v1/catalog/service',
             ],
             'services' => [
-                'test',
+                [
+                    "ServiceID" => "",
+                    "ServiceName" => "",
+                    "ServiceAddress" => "",
+                    "ServicePort" => ,
+                ], // or  ServiceName
             ],
         ],
     ],
