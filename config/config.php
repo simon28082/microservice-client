@@ -42,7 +42,7 @@ return [
                     "ServiceID" => "",
                     "ServiceName" => "",
                     "ServiceAddress" => "",
-                    "ServicePort" => ,
+                    "ServicePort" => 80,
                 ], // or  ServiceName
             ],
         ],
