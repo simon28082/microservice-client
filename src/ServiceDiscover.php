@@ -7,7 +7,7 @@ use CrCms\Foundation\MicroService\Client\Contracts\SelectorContract;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Cache\Repository;
-use Illuminate\Foundation\Application;
+use Illuminate\Container\Container;
 use Exception;
 use UnexpectedValueException;
 
@@ -44,12 +44,12 @@ class ServiceDiscover implements ServiceDiscoverContract
 
     /**
      * ServiceDiscover constructor.
-     * @param Application $app
+     * @param Container $app
      * @param SelectorContract $selector
      * @param Manager $manager
      * @param Repository $cache
      */
-    public function __construct(Application $app, SelectorContract $selector, Manager $manager)
+    public function __construct(Container $app, SelectorContract $selector, Manager $manager)
     {
         $this->app = $app;
         $this->selector = $selector;

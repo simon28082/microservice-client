@@ -17,6 +17,7 @@ use CrCms\Foundation\MicroService\Client\ServiceDiscover;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
 use CrCms\Foundation\MicroService\Client\ServiceFactory;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Lumen\Application;
 
 /**
  * Class MicroServiceProvider
@@ -45,9 +46,13 @@ class MicroServiceClientProvider extends ServiceProvider
     public function boot()
     {
         //move config path
-        $this->publishes([
-            $this->packagePath . 'config' => config_path(),
-        ]);
+        if ($this->isLumen()) {
+
+        } else {
+            $this->publishes([
+                $this->packagePath . 'config' => config_path(),
+            ]);
+        }
     }
 
     /**
@@ -55,6 +60,10 @@ class MicroServiceClientProvider extends ServiceProvider
      */
     public function register(): void
     {
+        if ($this->isLumen()) {
+            $this->app->configure($this->namespaceName);
+        }
+
         //merge config
         $configFile = $this->packagePath . "config/config.php";
         if (file_exists($configFile)) $this->mergeConfigFrom($configFile, $this->namespaceName);
@@ -80,6 +89,14 @@ class MicroServiceClientProvider extends ServiceProvider
         $this->app->singleton('micro-service-client.discovery', function ($app) {
             return new ServiceDiscover($app, $app->make('micro-service-client.discovery.selector'), $app->make('client.manager'));
         });
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isLumen(): bool
+    {
+        return class_exists(Application::class) && $this->app instanceof Application;
     }
 
     /**
