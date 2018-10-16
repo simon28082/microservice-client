@@ -9,6 +9,7 @@
 
 namespace CrCms\Foundation\MicroService\Client;
 
+use CrCms\Foundation\Client\ClientServiceProvider;
 use CrCms\Foundation\MicroService\Client\Contracts\Selector;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceContract;
 use CrCms\Foundation\MicroService\Client\Drivers\Restful;
@@ -71,6 +72,8 @@ class MicroServiceClientProvider extends ServiceProvider
         $this->registerAlias();
         $this->registerServices();
         $this->registerCommands();
+
+        $this->app->register(ClientServiceProvider::class);
     }
 
     /**
