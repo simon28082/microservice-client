@@ -9,15 +9,11 @@
 
 namespace CrCms\Foundation\MicroService\Client;
 
-use function CrCms\Foundation\App\Helpers\is_serialized;
 use CrCms\Foundation\Client\Manager;
 use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
-use BadMethodCallException;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceContract;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
-use CrCms\Foundation\MicroService\Client\ServiceFactory;
 use Illuminate\Contracts\Container\Container;
-use stdClass;
 use InvalidArgumentException;
 use DomainException;
 
