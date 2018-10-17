@@ -10,13 +10,9 @@
 namespace CrCms\Foundation\MicroService\Client;
 
 use CrCms\Foundation\Client\ClientServiceProvider;
-use CrCms\Foundation\MicroService\Client\Contracts\Selector;
-use CrCms\Foundation\MicroService\Client\Contracts\ServiceContract;
-use CrCms\Foundation\MicroService\Client\Drivers\Restful;
+use CrCms\Foundation\MicroService\Client\Contracts\SelectorContract;
 use CrCms\Foundation\MicroService\Client\Selectors\RandSelector;
-use CrCms\Foundation\MicroService\Client\ServiceDiscover;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
-use CrCms\Foundation\MicroService\Client\ServiceFactory;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
 
@@ -125,7 +121,7 @@ class MicroServiceClientProvider extends ServiceProvider
     {
         return [
             ServiceDiscoverContract::class,
-            Selector::class,
+            SelectorContract::class,
         ];
     }
 }
