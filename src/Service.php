@@ -157,9 +157,9 @@ class Service
     }
 
     /**
-     * @return object
+     * @return object|null
      */
-    public function getData(): object
+    public function getData()
     {
         return $this->data;
     }
