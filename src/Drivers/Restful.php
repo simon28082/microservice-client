@@ -23,7 +23,7 @@ class Restful implements ServiceContract
     /**
      * @var string
      */
-    protected $method = 'post';
+    protected $method = 'get';
 
     /**
      * @var Manager
