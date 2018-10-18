@@ -116,7 +116,24 @@ class Restful implements ServiceContract
             'host' => $service['ServiceAddress'],
             'port' => $service['ServicePort'],
             'settings' => array_merge($this->defaultConfig, $this->config['options']),
-        ])->request($uri, ['headers' => $this->headers, 'method' => $this->method, 'payload' => $params]);
+        ])->request($this->resolveUri($uri), ['headers' => $this->headers, 'method' => $this->method, 'payload' => $params]);
+    }
+
+    /**
+     * @param string $uri
+     * @return string
+     */
+    protected function resolveUri(string $uri): string
+    {
+        if (strpos($uri, '.')) {
+            $data = explode('.', $uri);
+            if (in_array(strtolower($data[0]), ['get', 'post', 'put', 'patch', 'update', 'delete'], true)) {
+                $this->setMethod($data[0]);
+                return $data[1];
+            }
+        }
+
+        return $uri;
     }
 
     /**
