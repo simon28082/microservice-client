@@ -120,6 +120,22 @@ class Restful implements ServiceContract
     }
 
     /**
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        return $this->client->getStatusCode();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getContent()
+    {
+        return $this->client->getContent();
+    }
+
+    /**
      * @param string $uri
      * @return string
      */

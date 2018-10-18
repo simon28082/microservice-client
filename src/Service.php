@@ -43,7 +43,7 @@ class Service
     /**
      * @var Manager
      */
-    protected $client;
+    //protected $client;
 
     /**
      * @var object
@@ -104,14 +104,22 @@ class Service
      */
     public function call(string $name, ?string $uri = null, array $params = [])
     {
-        $this->client = $this->whileGetConnection(
+        $this->whileGetConnection(
             $this->serviceDiscover->discover($name, $this->connection),
             $uri, $params
         );
 
-        $this->resolveData($this->client->getContent());
+        $this->resolveData($this->service()->getContent());
 
         return $this->getData();
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        return $this->service()->getStatusCode();
     }
 
     /**
@@ -165,12 +173,20 @@ class Service
     }
 
     /**
+     * @return object|null
+     */
+    public function getContent()
+    {
+        return $this->getData();
+    }
+
+    /**
      * @return Manager
      */
-    public function getClient(): Manager
+    /*public function getClient(): Manager
     {
         return $this->client;
-    }
+    }*/
 
     /**
      * 循环获取连接，直到非异常连接
@@ -196,7 +212,7 @@ class Service
     /**
      * @return ServiceContract
      */
-    protected function service(): ServiceContract
+    public function service(): ServiceContract
     {
         if (!$this->service instanceof ServiceContract) {
             $this->service = $this->factory->make($this->driver);

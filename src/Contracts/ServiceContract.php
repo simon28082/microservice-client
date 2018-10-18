@@ -27,4 +27,14 @@ interface ServiceContract
      * @return ServiceContract
      */
     public function auth(string $key, string $passowrd = ''): ServiceContract;
+
+    /**
+     * @return int
+     */
+    public function getStatusCode(): int;
+
+    /**
+     * @return mixed
+     */
+    public function getContent();
 }
