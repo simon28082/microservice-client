@@ -38,7 +38,7 @@ class Service
      *
      * @var int
      */
-    protected $retry = 3;
+    protected $retry = 0;
 
     /**
      * @var Manager

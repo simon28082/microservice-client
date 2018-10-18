@@ -36,6 +36,13 @@ class Restful implements ServiceContract
     protected $config;
 
     /**
+     * @var array
+     */
+    protected $defaultConfig = [
+        'timeout' => 1,
+    ];
+
+    /**
      * Restful constructor.
      * @param Manager $manager
      * @param array $config
@@ -108,7 +115,7 @@ class Restful implements ServiceContract
             'driver' => $this->config['driver'],
             'host' => $service['ServiceAddress'],
             'port' => $service['ServicePort'],
-            'settings' => $this->config['options'],
+            'settings' => array_merge($this->defaultConfig, $this->config['options']),
         ])->request($uri, ['headers' => $this->headers, 'method' => $this->method, 'payload' => $params]);
     }
 
