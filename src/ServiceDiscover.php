@@ -2,7 +2,7 @@
 
 namespace CrCms\Foundation\MicroService\Client;
 
-use CrCms\Foundation\Client\Manager;
+use CrCms\Foundation\Client\ClientManager;
 use CrCms\Foundation\MicroService\Client\Contracts\SelectorContract;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
 use Illuminate\Cache\CacheManager;
@@ -46,10 +46,9 @@ class ServiceDiscover implements ServiceDiscoverContract
      * ServiceDiscover constructor.
      * @param Container $app
      * @param SelectorContract $selector
-     * @param Manager $manager
-     * @param Repository $cache
+     * @param ClientManager $manager
      */
-    public function __construct(Container $app, SelectorContract $selector, Manager $manager)
+    public function __construct(Container $app, SelectorContract $selector, ClientManager $manager)
     {
         $this->app = $app;
         $this->selector = $selector;
@@ -113,7 +112,7 @@ class ServiceDiscover implements ServiceDiscoverContract
         ], false);
 
         try {
-            $content = $this->client->request($config['uri'] . '/' . $service, ['method' => 'get'])->getContent();
+            $content = $this->client->handle($config['uri'] . '/' . $service, ['method' => 'get'])->getContent();
             // @todo 这里还需要其它的判断，判断Client是否OK，JSON解析是否OK
             $content = json_decode($content, true);
             if (json_last_error() !== 0) {
@@ -126,10 +125,8 @@ class ServiceDiscover implements ServiceDiscoverContract
             $this->cache->put($serviceKey, $result, $this->app->make('config')->get("micro-service-client.discover_refresh_time", 5));
 
             return $result;
-        } catch (Exception $exception) {
-            throw $exception;
         } finally {
-            $this->client->close();
+            $this->client->disconnection();
         }
     }
 

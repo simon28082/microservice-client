@@ -41,9 +41,9 @@ class Service
     protected $retry = 0;
 
     /**
-     * @var Manager
+     * @var int
      */
-    //protected $client;
+    protected $statusCode;
 
     /**
      * @var object
@@ -109,17 +109,7 @@ class Service
             $uri, $params
         );
 
-        $this->resolveData($this->service()->getContent());
-
-        return $this->getData();
-    }
-
-    /**
-     * @return int
-     */
-    public function getStatusCode(): int
-    {
-        return $this->service()->getStatusCode();
+        return $this->service()->getContent();
     }
 
     /**
@@ -141,18 +131,6 @@ class Service
     }
 
     /**
-     * @param mixed $data
-     */
-    protected function resolveData($data): void
-    {
-        if ((bool)($newData = json_decode($data)) && json_last_error() === 0) {
-            $this->data = $newData;
-        } else {
-            $this->data = null;
-        }
-    }
-
-    /**
      * @param array $params
      * @return string
      */
@@ -165,39 +143,15 @@ class Service
     }
 
     /**
-     * @return object|null
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * @return object|null
-     */
-    public function getContent()
-    {
-        return $this->getData();
-    }
-
-    /**
-     * @return Manager
-     */
-    /*public function getClient(): Manager
-    {
-        return $this->client;
-    }*/
-
-    /**
      * 循环获取连接，直到非异常连接
      *
      * @param array $service
      * @param string $uri
      * @param array $params
      * @param int $depth
-     * @return Manager
+     * @return ServiceContract
      */
-    protected function whileGetConnection(array $service, string $uri, array $params = [], int $depth = 1): Manager
+    protected function whileGetConnection(array $service, string $uri, array $params = [], int $depth = 1): ServiceContract
     {
         try {
             return $this->service()->auth($this->secret($params))->call($service, $uri, $params);
@@ -227,8 +181,10 @@ class Service
      */
     public function __get(string $name)
     {
-        if (isset($this->data->{$name})) {
-            return $this->data->{$name};
+        $content = $this->service()->getContent();
+
+        if (isset($content->{$name})) {
+            return $content->{$name};
         }
 
         throw new InvalidArgumentException("The attribute[{$name}] is not exists");
@@ -247,9 +203,10 @@ class Service
                 $this->service = $result;
                 return $this;
             }
+
+            return $result;
         }
 
         return $this->call($name, ...$arguments);
-        //throw new BadMethodCallException("The method[{$name}] is not exists");
     }
 }

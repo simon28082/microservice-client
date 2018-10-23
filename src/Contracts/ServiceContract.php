@@ -17,9 +17,9 @@ interface ServiceContract
      * @param array $service
      * @param string $uri
      * @param array $params
-     * @return Manager
+     * @return ServiceContract
      */
-    public function call(array $service, string $uri, array $params = []): Manager;
+    public function call(array $service, string $uri, array $params = []): ServiceContract;
 
     /**
      * @param string $key
