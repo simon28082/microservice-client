@@ -87,7 +87,7 @@ class ServiceDiscover implements ServiceDiscoverContract
             $services = $this->discoverServices($service, $driver);
         }
 
-        return $services;
+        return collect($services)->groupBy('ServiceName')->get($service, collect())->toArray();
     }
 
     /**
