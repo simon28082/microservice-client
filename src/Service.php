@@ -10,8 +10,10 @@
 namespace CrCms\Foundation\MicroService\Client;
 
 use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
+use CrCms\Foundation\ConnectionPool\Exceptions\RequestException;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceContract;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
+use CrCms\Foundation\MicroService\Client\Exceptions\ServiceException;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 use DomainException;
@@ -156,10 +158,20 @@ class Service
             return $this->service()->auth($this->secret($params))->call($service, $uri, $params);
         } catch (ConnectionException $exception) {
             if ($depth > $this->retry) {
-                throw $exception;
+                $this->throwException($exception);
             }
             return $this->whileGetConnection($service, $uri, $params, $depth += 1);
+        } catch (\Exception $exception) {
+            $this->throwException($exception);
         }
+    }
+
+    /**
+     * @param $exception
+     */
+    protected function throwException($exception)
+    {
+        throw new ServiceException($exception);
     }
 
     /**
