@@ -5,7 +5,6 @@ namespace CrCms\Foundation\MicroService\Client;
 use CrCms\Foundation\Client\ClientManager;
 use CrCms\Foundation\MicroService\Client\Contracts\SelectorContract;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
-use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Container\Container;
 use Exception;
@@ -18,7 +17,7 @@ use UnexpectedValueException;
 class ServiceDiscover implements ServiceDiscoverContract
 {
     /**
-     * @var Application
+     * @var Container
      */
     protected $app;
 

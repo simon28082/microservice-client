@@ -111,7 +111,7 @@ class MicroServiceClientProvider extends ServiceProvider
     protected function registerAlias(): void
     {
         $this->app->alias('micro-service-client.discovery', ServiceDiscoverContract::class);
-        $this->app->alias('micro-service-client.discovery.selector', Selector::class);
+        $this->app->alias('micro-service-client.discovery.selector', SelectorContract::class);
     }
 
     /**
