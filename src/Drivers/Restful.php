@@ -190,7 +190,7 @@ class Restful implements ServiceContract
      */
     public function auth(string $key, string $password = ''): ServiceContract
     {
-        $this->headers['Authorization'] = $key;
+        $this->headers['X-CRCMS-Microservice-Hash'] = $key;
         return $this;
     }
 }
