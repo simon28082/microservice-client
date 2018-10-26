@@ -9,7 +9,6 @@
 
 namespace CrCms\Foundation\MicroService\Client;
 
-use CrCms\Foundation\Client\Manager;
 use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceContract;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;

@@ -49,9 +49,9 @@ class Restful implements ServiceContract
     protected $content;
 
     /**
-     * @var Connection
+     * @var ClientManager
      */
-    //protected $connection;
+    protected $client;
 
     /**
      * Restful constructor.

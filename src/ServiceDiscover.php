@@ -33,7 +33,7 @@ class ServiceDiscover implements ServiceDiscoverContract
     protected $selector;
 
     /**
-     * @var Manager
+     * @var ClientManager
      */
     protected $client;
 
