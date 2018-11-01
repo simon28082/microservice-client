@@ -27,7 +27,7 @@ class ServiceException extends RuntimeException
     /**
      * @var
      */
-    protected $statusCode;
+    protected $statusCode = 0;
 
     /**
      * ServiceException constructor.
@@ -72,6 +72,9 @@ class ServiceException extends RuntimeException
      */
     public function render()
     {
-        return new JsonResponse($this->exceptionMessage, $this->statusCode ?? 500);
+        return new JsonResponse(
+            $this->exceptionMessage ? $this->exceptionMessage : 'Bad Gateway',
+            $this->statusCode <= 0 ? 502 : $this->statusCode
+        );
     }
 }
