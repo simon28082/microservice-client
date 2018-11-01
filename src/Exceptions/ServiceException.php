@@ -57,7 +57,7 @@ class ServiceException extends RuntimeException
      * @param string $message
      * @return mixed|string
      */
-    protected function resolveMessage(string $message)
+    protected function resolveMessage(?string $message = null)
     {
         $result = json_decode($message, true);
         if (json_last_error() !== 0) {
