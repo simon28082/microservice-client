@@ -130,24 +130,11 @@ class Restful implements ServiceContract
         ])->handle($this->resolveUri($uri), ['headers' => $this->headers, 'method' => $this->method, 'payload' => $params]);
 
         $this->statusCode = $this->client->getStatusCode();
-        $this->content = $this->resolveData($this->client->getContent());
+        $this->content = $this->client->getContent();
 
         $this->client->disconnection();
 
         return $this;
-    }
-
-    /**
-     * @param $data
-     * @return mixed|null
-     */
-    protected function resolveData($data)
-    {
-        if ((bool)($newData = json_decode($data)) && json_last_error() === 0) {
-            return $newData;
-        } else {
-            return null;
-        }
     }
 
     /**

@@ -15,8 +15,7 @@ use CrCms\Foundation\MicroService\Client\Contracts\ServiceContract;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
 use CrCms\Foundation\MicroService\Client\Exceptions\ServiceException;
 use Illuminate\Contracts\Container\Container;
-use InvalidArgumentException;
-use DomainException;
+use InvalidArgumentException, BadMethodCallException, DomainException;
 
 /**
  * Class Service
@@ -110,7 +109,9 @@ class Service
             $uri, $params
         );
 
-        return $this->service()->getContent();
+        $this->data = new ServiceData($this->service()->getContent());
+
+        return $this->data;
     }
 
     /**
@@ -192,13 +193,7 @@ class Service
      */
     public function __get(string $name)
     {
-        $content = $this->service()->getContent();
-
-        if (isset($content->{$name})) {
-            return $content->{$name};
-        }
-
-        throw new InvalidArgumentException("The attribute[{$name}] is not exists");
+        return $this->data->{$name};
     }
 
     /**
