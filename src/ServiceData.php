@@ -12,7 +12,7 @@ use ArrayAccess;
 class ServiceData implements ArrayAccess
 {
     /**
-     * @var array
+     * @var object
      */
     protected $data;
 
@@ -31,7 +31,7 @@ class ServiceData implements ArrayAccess
      */
     protected function resolveData($data)
     {
-        if ((bool)($newData = json_decode($data, true)) && json_last_error() === 0) {
+        if ((bool)($newData = json_decode($data)) && json_last_error() === 0) {
             return $newData;
         } else {
             return null;
@@ -61,7 +61,7 @@ class ServiceData implements ArrayAccess
             return false;
         }
 
-        return isset($this->data[$offset]);
+        return isset($this->data->$offset);
     }
 
     /**
@@ -71,7 +71,7 @@ class ServiceData implements ArrayAccess
     public function offsetGet($offset)
     {
         if ($this->offsetExists($offset)) {
-            return $this->data[$offset];
+            return $this->data->$offset;
         }
 
         return null;
