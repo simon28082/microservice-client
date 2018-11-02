@@ -9,6 +9,7 @@ use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Container\Container;
 use Exception;
 use UnexpectedValueException;
+use DomainException;
 
 /**
  * Class ServiceDiscover
@@ -86,7 +87,13 @@ class ServiceDiscover implements ServiceDiscoverContract
             $services = $this->discoverServices($service, $driver);
         }
 
-        return collect($services)->groupBy('ServiceName')->get($service, collect())->toArray();
+        $services = collect($services)->groupBy('ServiceName')->get($service, collect())->toArray();
+
+        if (empty($services)) {
+            throw new DomainException("The serivce[{$service}] not found");
+        }
+
+        return $services;
     }
 
     /**
