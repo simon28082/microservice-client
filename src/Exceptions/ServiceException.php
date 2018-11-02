@@ -46,7 +46,9 @@ class ServiceException extends RuntimeException
     {
         if ($exception instanceof ConnectionException || $exception instanceof RequestException) {
             $this->statusCode = $exception->getConnection()->getStatusCode();
-            $this->exceptionMessage = $this->resolveMessage($exception->getConnection()->getContent());
+            $message = $exception->getConnection()->getContent();
+            $message = $message ? $message : $exception->getMessage();
+            $this->exceptionMessage = $this->resolveMessage((string)$message);
         } else {
             $this->exceptionMessage = $exception->getMessage();
             $this->exceptionCode = $exception->getCode();
