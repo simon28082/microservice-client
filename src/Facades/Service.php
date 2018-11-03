@@ -15,7 +15,10 @@ use CrCms\Foundation\MicroService\Client\Service as ServiceInstance;
  */
 class Service extends Facade
 {
-    protected static function getFacadeAccessor()
+    /**
+     * @return string
+     */
+    protected static function getFacadeAccessor(): string
     {
         return ServiceInstance::class;
     }
