@@ -4,7 +4,10 @@ namespace CrCms\Foundation\MicroService\Client\Exceptions;
 
 use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
 use CrCms\Foundation\ConnectionPool\Exceptions\RequestException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use RuntimeException;
 use Exception;
 
@@ -15,17 +18,12 @@ use Exception;
 class ServiceException extends RuntimeException
 {
     /**
-     * @var
+     * @var array|string
      */
     protected $exceptionMessage;
 
     /**
-     * @var
-     */
-    protected $exceptionCode;
-
-    /**
-     * @var
+     * @var int
      */
     protected $statusCode = 0;
 
@@ -40,18 +38,38 @@ class ServiceException extends RuntimeException
     }
 
     /**
+     * @return array|string
+     */
+    public function getExceptionMessage()
+    {
+        return $this->exceptionMessage ? $this->exceptionMessage : 'Gateway error';
+    }
+
+    /**
+     * @return int
+     */
+    public function getExceptionStatusCode(): int
+    {
+        return $this->statusCode <= 0 ? 502 : $this->statusCode;
+    }
+
+    /**
      * @param Exception $exception
      */
     protected function resolveException(Exception $exception)
     {
-        if ($exception instanceof ConnectionException || $exception instanceof RequestException) {
+        if ($exception instanceof ConnectionException) {
             $this->statusCode = $exception->getConnection()->getStatusCode();
-            $message = $exception->getConnection()->getContent();
-            $message = $message ? $message : $exception->getMessage();
-            $this->exceptionMessage = $this->resolveMessage((string)$message);
+            $this->exceptionMessage = $this->resolveMessage(strval($exception->getMessage()));
+        } elseif ($exception instanceof RequestException) {
+            $this->statusCode = $exception->getConnection()->getStatusCode();
+            $this->exceptionMessage = $this->resolveMessage(strval($exception->getConnection()->getContent()));
+            if (is_array($this->exceptionMessage) && empty($this->exceptionMessage['message'])) {
+                $this->exceptionMessage = $this->resolveMessage(strval($exception->getMessage()));
+            }
         } else {
             $this->exceptionMessage = $exception->getMessage();
-            $this->exceptionCode = $exception->getCode();
+            $this->statusCode = $exception->getCode();
         }
     }
 
@@ -71,12 +89,19 @@ class ServiceException extends RuntimeException
 
     /**
      * @return JsonResponse
+     * @throws Exception
      */
     public function render()
     {
-        return new JsonResponse(
-            $this->exceptionMessage ? $this->exceptionMessage : 'Bad Gateway',
-            $this->statusCode <= 0 ? 502 : $this->statusCode
-        );
+        $statusCode = $this->getExceptionStatusCode();
+        if (is_array($this->exceptionMessage)) {
+            return new JsonResponse(
+                $this->exceptionMessage,
+                $statusCode
+            );
+        } else {
+            throw new Exception($this->exceptionMessage,
+                $statusCode);
+        }
     }
 }
