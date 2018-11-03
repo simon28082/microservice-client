@@ -87,7 +87,7 @@ return [
     | The hash value used to generate data interaction between services
     |
     */
-    
+
     'secret' => env('SERVICE_SECRET', null),
 
     /*
@@ -103,4 +103,16 @@ return [
     */
 
     'selector' => \CrCms\Foundation\MicroService\Client\Selectors\RandSelector::class,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Services call events
+    |--------------------------------------------------------------------------
+    | The escalation event listener of the service execution result.
+    | Must implement the CrCms\Foundation\MicroService\Client\Contracts\CallEventContract interface
+    */
+
+    'events' => [
+
+    ]
 ];

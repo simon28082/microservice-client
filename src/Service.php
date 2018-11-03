@@ -164,6 +164,12 @@ class Service
             return $this->whileGetConnection($service, $uri, $params, $depth += 1);
         } catch (\Exception $exception) {
             $this->throwException($exception);
+        } finally {
+            /* 服务上报，事件触发 */
+            $serverInfo = compact('service', 'uri', 'params');
+            $callParams = isset($exception) ? ['micro-service.call.failed', [$this, $exception, $serverInfo]] : ['micro-service.call', [$this, $serverInfo]];
+
+            call_user_func_array([$this->app->make('events'), 'fire'], $callParams);
         }
     }
 

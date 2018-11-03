@@ -13,6 +13,7 @@ use CrCms\Foundation\Client\ClientServiceProvider;
 use CrCms\Foundation\MicroService\Client\Contracts\SelectorContract;
 use CrCms\Foundation\MicroService\Client\Selectors\RandSelector;
 use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
 
@@ -49,6 +50,12 @@ class MicroServiceClientProvider extends ServiceProvider
             $this->publishes([
                 $this->packagePath . 'config/config.php' => config_path($this->namespaceName . ".php"),
             ]);
+        }
+
+        //event listen
+        foreach ($this->app->make('config')->get('micro-service-client.events', []) as $event) {
+            Event::listen('micro-service.call', $event.'@handle');
+            Event::listen('micro-service.call.failed', $event.'@failed');
         }
     }
 

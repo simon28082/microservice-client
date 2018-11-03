@@ -1,32 +1,38 @@
 {
-    "name": "crcms/micro-service-client",
-    "description": "CRCMS Micro Service",
-	"keywords": ["micro-service", "service", "crcms", "rpc"],
-	"homepage": "https://github.com/crcms/micro-service-client",
-    "license": "MIT",
-    "require": {
-        "php":">=7.1",
-        "crcms/client":"dev-master"
-    },
-	"autoload": {
-        "files": [
-        ],
-        "psr-4": {
-            "CrCms\\Foundation\\MicroService\\Client\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "CrCms\\Foundation\\MicroService\\Client\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "CrCms\\Foundation\\MicroService\\Client\\MicroServiceClientProvider"
-            ],
-            "aliases": {
-            }
-        }
+  "name": "crcms/micro-service-client",
+  "description": "CRCMS Micro Service",
+  "keywords": [
+    "micro-service",
+    "service",
+    "crcms",
+    "rpc"
+  ],
+  "homepage": "https://github.com/crcms/micro-service-client",
+  "license": "MIT",
+  "require": {
+    "php": ">=7.1",
+    "illuminate/events": "^5.5",
+    "crcms/client": "dev-master"
+  },
+  "autoload": {
+    "files": [
+    ],
+    "psr-4": {
+      "CrCms\\Foundation\\MicroService\\Client\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "CrCms\\Foundation\\MicroService\\Client\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "CrCms\\Foundation\\MicroService\\Client\\MicroServiceClientProvider"
+      ],
+      "aliases": {
+      }
+    }
+  }
 }
