@@ -39,6 +39,16 @@ class ServiceData implements ArrayAccess
     }
 
     /**
+     * @param $key
+     * @param null $default
+     * @return mixed
+     */
+    public function data(string $key, $default = null)
+    {
+        return data_get($this->data, $key);
+    }
+
+    /**
      * @param string $name
      * @return mixed|null
      */
