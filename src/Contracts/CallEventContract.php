@@ -1,13 +1,13 @@
 <?php
 
-namespace CrCms\Foundation\MicroService\Client\Contracts;
+namespace CrCms\Microservice\Client\Contracts;
 
-use CrCms\Foundation\MicroService\Client\Service;
+use CrCms\Microservice\Client\Service;
 use Exception;
 
 /**
  * Interface CallEventContract
- * @package CrCms\Foundation\MicroService\Client\Contracts
+ * @package CrCms\Microservice\Client\Contracts
  */
 interface CallEventContract
 {

@@ -7,7 +7,7 @@
  * @copyright Copyright &copy; 2018 Rights Reserved CRCMS
  */
 
-namespace CrCms\Foundation\MicroService\Client\Contracts;
+namespace CrCms\Microservice\Client\Contracts;
 
 use CrCms\Foundation\Client\Manager;
 
@@ -19,7 +19,7 @@ interface ServiceContract
      * @param array $params
      * @return ServiceContract
      */
-    public function call(array $service, string $uri, array $params = []): ServiceContract;
+    public function call(array $service, array $params = []): ServiceContract;
 
     /**
      * @param string $key

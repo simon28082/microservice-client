@@ -1,10 +1,10 @@
 <?php
 
-namespace CrCms\Foundation\MicroService\Client;
+namespace CrCms\Microservice\Client;
 
 use CrCms\Foundation\Client\ClientManager;
-use CrCms\Foundation\MicroService\Client\Contracts\SelectorContract;
-use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
+use CrCms\Microservice\Client\Contracts\SelectorContract;
+use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Container\Container;
 use Exception;
@@ -13,7 +13,7 @@ use DomainException;
 
 /**
  * Class ServiceDiscover
- * @package CrCms\Foundation\MicroService\Client
+ * @package CrCms\Microservice\Client
  */
 class ServiceDiscover implements ServiceDiscoverContract
 {
@@ -109,7 +109,7 @@ class ServiceDiscover implements ServiceDiscoverContract
             return $this->cache->get($serviceKey);
         }
 
-        $config = $this->app->make('config')->get("micro-service-client.connections.{$driver}.discover");
+        $config = $this->app->make('config')->get("microservice-client.connections.{$driver}.discover");
 
         $this->client->connection([
             'driver' => $config['driver'],
@@ -128,7 +128,7 @@ class ServiceDiscover implements ServiceDiscoverContract
                 return [$item['ServiceID'] => $item];
             })->toArray();
 
-            $this->cache->put($serviceKey, $result, $this->app->make('config')->get("micro-service-client.discover_refresh_time", 5));
+            $this->cache->put($serviceKey, $result, $this->app->make('config')->get("microservice-client.discover_refresh_time", 5));
 
             return $result;
         } finally {
@@ -143,7 +143,7 @@ class ServiceDiscover implements ServiceDiscoverContract
      */
     protected function builtInServices(string $service, string $driver): array
     {
-        $services = $this->app->make('config')->get("micro-service-client.connections.{$driver}.services");
+        $services = $this->app->make('config')->get("microservice-client.connections.{$driver}.services");
         if (count($services) !== count($services, COUNT_RECURSIVE)) {
             return $services;
         }
@@ -165,6 +165,6 @@ class ServiceDiscover implements ServiceDiscoverContract
      */
     protected function defaultDriver(): string
     {
-        return $this->app->make('config')->get('micro-service-client.default');
+        return $this->app->make('config')->get('microservice-client.default');
     }
 }

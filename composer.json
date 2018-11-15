@@ -1,13 +1,13 @@
 {
-  "name": "crcms/micro-service-client",
-  "description": "CRCMS Micro Service",
+  "name": "crcms/microservice-client",
+  "description": "CRCMS Microservice Client",
   "keywords": [
-    "micro-service",
-    "service",
-    "crcms",
+    "microservice",
+    "tcp",
+    "http",
     "rpc"
   ],
-  "homepage": "https://github.com/crcms/micro-service-client",
+  "homepage": "https://github.com/crcms/microservice-client",
   "license": "MIT",
   "require": {
     "php": ">=7.1",
@@ -23,13 +23,13 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "CrCms\\Foundation\\MicroService\\Client\\Tests\\": "tests/"
+      "CrCms\\Microservice\\Client\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "CrCms\\Foundation\\MicroService\\Client\\MicroServiceClientProvider"
+        "CrCms\\Microservice\\Client\\MicroServiceClientProvider"
       ],
       "aliases": {
       }

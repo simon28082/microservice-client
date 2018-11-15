@@ -1,6 +1,6 @@
 <?php
 
-namespace CrCms\Foundation\MicroService\Client\Exceptions;
+namespace CrCms\Microservice\Client\Exceptions;
 
 use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
 use CrCms\Foundation\ConnectionPool\Exceptions\RequestException;
@@ -13,7 +13,7 @@ use Exception;
 
 /**
  * Class ServiceException
- * @package CrCms\Foundation\MicroService\Client\Exceptions
+ * @package CrCms\Microservice\Client\Exceptions
  */
 class ServiceException extends RuntimeException
 {

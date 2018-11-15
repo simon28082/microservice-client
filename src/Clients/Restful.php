@@ -1,14 +1,14 @@
 <?php
 
-namespace CrCms\Foundation\MicroService\Client\Drivers;
+namespace CrCms\Microservice\Client\Clients;
 
 use CrCms\Foundation\Client\ClientManager;
-use CrCms\Foundation\MicroService\Client\Contracts\ServiceContract;
+use CrCms\Microservice\Client\Contracts\ServiceContract;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class Restful
- * @package CrCms\Foundation\MicroService\Client\Drivers
+ * @package CrCms\Microservice\Client\Drivers
  */
 class Restful implements ServiceContract
 {
@@ -22,14 +22,14 @@ class Restful implements ServiceContract
     ];
 
     /**
-     * @var string
-     */
-    protected $method = 'get';
-
-    /**
      * @var array
      */
     protected $config;
+
+    /**
+     * @var string
+     */
+    protected $method = 'post';
 
     /**
      * @var array
@@ -66,44 +66,6 @@ class Restful implements ServiceContract
     }
 
     /**
-     * @param string $method
-     * @return Restful
-     */
-    public function method(string $method): self
-    {
-        return $this->setMethod($method);
-    }
-
-    /**
-     * @param string $method
-     * @return Restful
-     */
-    public function setMethod(string $method): self
-    {
-        $this->method = $method;
-        return $this;
-    }
-
-    /**
-     * @param array $headers
-     * @return Restful
-     */
-    public function headers(array $headers): self
-    {
-        return $this->addHeaders($headers);
-    }
-
-    /**
-     * @param array $headers
-     * @return Restful
-     */
-    public function setHeaders(array $headers): self
-    {
-        $this->headers = $headers;
-        return $this;
-    }
-
-    /**
      * @param array $headers
      * @return Restful
      */
@@ -119,15 +81,15 @@ class Restful implements ServiceContract
      * @param array $params
      * @return Restful
      */
-    public function call(array $service, string $uri, array $params = []): ServiceContract
+    public function call(array $service, array $params = []): ServiceContract
     {
         $this->client->connection([
-            'name' => $service['ServiceName'],
+            'name' => $service['name'],
             'driver' => $this->config['driver'],
-            'host' => $service['ServiceAddress'],
-            'port' => $service['ServicePort'],
+            'host' => $service['host'],
+            'port' => $service['port'],
             'settings' => array_merge($this->defaultConfig, $this->config['options']),
-        ])->handle($this->resolveUri($uri), ['headers' => $this->headers, 'method' => $this->method, 'payload' => $params]);
+        ])->handle('/', ['headers' => $this->headers, 'method' => $this->method, 'payload' => $params]);
 
         $this->statusCode = $this->client->getStatusCode();
         $this->content = $this->client->getContent();
@@ -151,23 +113,6 @@ class Restful implements ServiceContract
     public function getContent()
     {
         return $this->content;
-    }
-
-    /**
-     * @param string $uri
-     * @return string
-     */
-    protected function resolveUri(string $uri): string
-    {
-        if (strpos($uri, '.')) {
-            $data = explode('.', $uri);
-            if (in_array(strtolower($data[0]), ['get', 'post', 'put', 'patch', 'update', 'delete'], true)) {
-                $this->setMethod($data[0]);
-                return $data[1];
-            }
-        }
-
-        return $uri;
     }
 
     /**

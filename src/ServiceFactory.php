@@ -1,9 +1,9 @@
 <?php
 
-namespace CrCms\Foundation\MicroService\Client;
+namespace CrCms\Microservice\Client;
 
-use CrCms\Foundation\MicroService\Client\Contracts\ServiceContract;
-use CrCms\Foundation\MicroService\Client\Drivers\Restful;
+use CrCms\Microservice\Client\Contracts\ServiceContract;
+use CrCms\Microservice\Client\Drivers\Restful;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 
@@ -33,7 +33,7 @@ class ServiceFactory
      */
     public function make(string $driver): ServiceContract
     {
-        $config = $this->app->make('config')->get("micro-service-client.clients.{$driver}");
+        $config = $this->app->make('config')->get("microservice-client.clients.{$driver}");
 
         switch ($config['name']) {
             case 'restful':

@@ -1,13 +1,13 @@
 <?php
 
-namespace CrCms\Foundation\MicroService\Client;
+namespace CrCms\Microservice\Client;
 
 use BadMethodCallException;
 use ArrayAccess;
 
 /**
  * Class ServiceData
- * @package CrCms\Foundation\MicroService\Client
+ * @package CrCms\Microservice\Client
  */
 class ServiceData implements ArrayAccess
 {

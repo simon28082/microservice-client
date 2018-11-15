@@ -7,7 +7,7 @@
  * @copyright Copyright &copy; 2018 Rights Reserved CRCMS
  */
 
-namespace CrCms\Foundation\MicroService\Client\Contracts;
+namespace CrCms\Microservice\Client\Contracts;
 
 interface SelectorContract
 {

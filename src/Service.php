@@ -7,19 +7,19 @@
  * @copyright Copyright &copy; 2018 Rights Reserved CRCMS
  */
 
-namespace CrCms\Foundation\MicroService\Client;
+namespace CrCms\Microservice\Client;
 
 use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
 use CrCms\Foundation\ConnectionPool\Exceptions\RequestException;
-use CrCms\Foundation\MicroService\Client\Contracts\ServiceContract;
-use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
-use CrCms\Foundation\MicroService\Client\Exceptions\ServiceException;
+use CrCms\Microservice\Client\Contracts\ServiceContract;
+use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
+use CrCms\Microservice\Client\Exceptions\ServiceException;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException, BadMethodCallException, DomainException;
 
 /**
  * Class Service
- * @package CrCms\Foundation\MicroService\Client
+ * @package CrCms\Microservice\Client
  */
 class Service
 {
@@ -91,7 +91,7 @@ class Service
      */
     public function connection(?string $name = null)
     {
-        $this->connection = $name ? $name : $this->app->make('config')->get('micro-service-client.default');
+        $this->connection = $name ? $name : $this->app->make('config')->get('microservice-client.default');
 
         return $this;
     }
@@ -120,9 +120,9 @@ class Service
      */
     public function driver(?string $driver = null): Service
     {
-        $driver = $driver ? $driver : $this->app->make('config')->get('micro-service-client.client');
+        $driver = $driver ? $driver : $this->app->make('config')->get('microservice-client.client');
 
-        $connections = array_keys($this->app->make('config')->get('micro-service-client.clients'));
+        $connections = array_keys($this->app->make('config')->get('microservice-client.clients'));
         if (!in_array($driver, $connections, true)) {
             throw new DomainException("The Driver[{$driver}] not exists");
         }
@@ -140,7 +140,7 @@ class Service
     {
         return hash_hmac(
             'ripemd256', serialize($params),
-            (string)$this->app->make('config')->get('micro-service-client.secret')
+            (string)$this->app->make('config')->get('microservice-client.secret')
         );
     }
 
@@ -156,7 +156,7 @@ class Service
     protected function whileGetConnection(array $service, string $uri, array $params = [], int $depth = 1): ServiceContract
     {
         try {
-            return $this->service()->auth($this->secret($params))->call($service, $uri, $params);
+            return $this->service()->auth($this->secret($params))->call($service, ['call' => $uri, 'data' => $params]);
         } catch (ConnectionException $exception) {
             if ($depth > $this->retry) {
                 $this->throwException($exception);
@@ -167,7 +167,7 @@ class Service
         } finally {
             /* 服务上报，事件触发 */
             $serverInfo = compact('service', 'uri', 'params');
-            $callParams = isset($exception) ? ['micro-service.call.failed', [$this, $exception, $serverInfo]] : ['micro-service.call', [$this, $serverInfo]];
+            $callParams = isset($exception) ? ['microservice.call.failed', [$this, $exception, $serverInfo]] : ['microservice.call', [$this, $serverInfo]];
 
             call_user_func_array([$this->app->make('events'), 'fire'], $callParams);
         }

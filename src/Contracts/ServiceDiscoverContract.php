@@ -1,17 +1,16 @@
 <?php
 
-namespace CrCms\Foundation\MicroService\Client\Contracts;
+namespace CrCms\Microservice\Client\Contracts;
 
 /**
- * Class ServiceDiscoverContract
- * @package CrCms\Foundation\Rpc\Contracts
+ * Interface ServiceDiscoverContract
+ * @package CrCms\Microservice\Client\Contracts
  */
 interface ServiceDiscoverContract
 {
     /**
-     * @param string $service
-     * @param null|string $driver
+     * @param array $config
      * @return array
      */
-    public function discover(string $service, ?string $driver = null): array;
+    public function services(array $config): array;
 }
