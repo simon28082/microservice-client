@@ -62,17 +62,6 @@ class Restful implements ClientContract
     {
         $this->client = $manager;
         $this->config = $config;
-        $this->addHeaders($config['headers'] ?? []);
-    }
-
-    /**
-     * @param array $headers
-     * @return Restful
-     */
-    public function addHeaders(array $headers): self
-    {
-        $this->headers = array_merge($this->headers, $headers);
-        return $this;
     }
 
     /**
