@@ -92,12 +92,19 @@ class Service
 
     /**
      * @param string $service
-     * @param null|string $uri
+     * @param string|array $uri
      * @param array $params
      * @return object
      */
-    public function call(string $service, ?string $uri = null, array $params = [])
+    public function call(string $service, $uri = '', array $params = [])
     {
+        if (is_array($uri) || empty($uri)) {
+            $params = $uri ?? [];
+            $url = explode('.', $service);
+            $service = array_shift($url);
+            $uri = implode('.', $url);
+        }
+
         $data = $this->secret->encrypt($params);
 
         try {
