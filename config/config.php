@@ -46,10 +46,10 @@ return [
         'local' => [
             'discover' => [
                 [
-                    "ServiceID" => "assistant_1",
-                    "ServiceName" => "assistant",
-                    "ServiceAddress" => "assistant.test",
-                    "ServicePort" => 80,
+                    "id" => "assistant_1",
+                    "name" => "assistant",
+                    "host" => "assistant.test",
+                    "port" => 80,
                 ], // or  ServiceName
             ],
             'services' => [
@@ -95,16 +95,30 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Interactive authentication key
+    | Whether to enable microservice data encryption and decryption
     |--------------------------------------------------------------------------
-    |
-    | The hash value used to generate data interaction between services
     |
     */
 
-    'secret' => env('SERVICE_SECRET', null),
+    'secret_status' => env('SECRET_STATUS',true),
 
-    'secret_method' => env('SERVICE_SECRET_METHOD', 'AES-256-CFB'),
+    /*
+    |--------------------------------------------------------------------------
+    | Microservice data encryption and decryption key
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'secret' => env('SECRET','#1#2@!##'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Microservice data encryption and decryption method
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'secret_cipher' => env('SECRET_CIPHER','AES-256-CFB'),
 
     /*
     |--------------------------------------------------------------------------

@@ -10,9 +10,11 @@
 namespace CrCms\Microservice\Client;
 
 use CrCms\Foundation\Client\ClientServiceProvider;
+use CrCms\Microservice\Client\Contracts\SecretContract;
 use CrCms\Microservice\Client\Contracts\SelectorContract;
 use CrCms\Microservice\Client\Selectors\RandSelector;
 use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
+use CrCms\Microservice\Client\Services\Local;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
@@ -26,7 +28,7 @@ class MicroserviceClientProvider extends ServiceProvider
     /**
      * @var bool
      */
-    protected $defer = false;
+    protected $defer = true;
 
     /**
      * @var string
@@ -76,7 +78,7 @@ class MicroserviceClientProvider extends ServiceProvider
         $this->registerServices();
         $this->registerCommands();
 
-        $this->app->register(ClientServiceProvider::class);
+        //$this->app->register(ClientServiceProvider::class);
     }
 
     /**
@@ -88,12 +90,17 @@ class MicroserviceClientProvider extends ServiceProvider
             return new ServiceFactory($app);
         });
 
-        $this->app->singleton('microservice-client.discovery.selector', function () {
-            return new RandSelector;
+        $this->app->singleton('microservice-client.selector', function ($app) {
+            return new RandSelector($app['microservice-client.discovery']);
+        });
+
+        $this->app->singleton('microservice-client.sceret', function ($app) {
+            return new Secret($app['config']);
         });
 
         $this->app->singleton('microservice-client.discovery', function ($app) {
-            return new ServiceDiscover($app, $app->make('microservice-client.discovery.selector'), $app->make('client.manager'));
+            //return new ServiceDiscover($app, $app->make('microservice-client.discovery.selector'), $app->make('client.manager'));
+            return new Local($app);
         });
     }
 
@@ -118,7 +125,8 @@ class MicroserviceClientProvider extends ServiceProvider
     protected function registerAlias(): void
     {
         $this->app->alias('microservice-client.discovery', ServiceDiscoverContract::class);
-        $this->app->alias('microservice-client.discovery.selector', SelectorContract::class);
+        $this->app->alias('microservice-client.selector', SelectorContract::class);
+        $this->app->alias('microservice-client.sceret', SecretContract::class);
     }
 
     /**
@@ -130,6 +138,7 @@ class MicroserviceClientProvider extends ServiceProvider
             ServiceDiscoverContract::class,
             SelectorContract::class,
             ServiceFactory::class,
+            SecretContract::class,
         ];
     }
 }

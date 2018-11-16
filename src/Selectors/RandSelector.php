@@ -19,12 +19,26 @@ use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 class RandSelector implements SelectorContract
 {
     /**
+     * @var ServiceDiscoverContract
+     */
+    protected $discover;
+
+    /**
+     * RandSelector constructor.
      * @param ServiceDiscoverContract $discover
+     */
+    public function __construct(ServiceDiscoverContract $discover)
+    {
+        $this->discover = $discover;
+    }
+
+    /**
+     * @param string $service
      * @return array
      */
-    public function select(ServiceDiscoverContract $discover): array
+    public function select(string $service): array
     {
-        $services = $discover->services();
+        $services = $this->discover->services($service);
         return $services[array_rand($services)];
     }
 }

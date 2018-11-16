@@ -4,12 +4,11 @@ namespace CrCms\Microservice\Client\Exceptions;
 
 use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
 use CrCms\Foundation\ConnectionPool\Exceptions\RequestException;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use CrCms\Microservice\Client\Contracts\SecretContract;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
-use Illuminate\Validation\ValidationException;
 use RuntimeException;
 use Exception;
+use UnexpectedValueException;
 
 /**
  * Class ServiceException
@@ -38,7 +37,6 @@ class ServiceException extends RuntimeException
      */
     public function __construct(Exception $exception)
     {
-        $this->exception = $exception;
         $this->resolveException($exception);
         parent::__construct($exception->getMessage(), $exception->getCode());
     }
@@ -66,12 +64,14 @@ class ServiceException extends RuntimeException
     {
         if ($exception instanceof ConnectionException) {
             $this->statusCode = $exception->getConnection()->getStatusCode();
-            $this->exceptionMessage = $this->resolveMessage(strval($exception->getMessage()));
+            $this->exceptionMessage = $exception->getMessage();
         } elseif ($exception instanceof RequestException) {
             $this->statusCode = $exception->getConnection()->getStatusCode();
-            $this->exceptionMessage = $this->resolveMessage(strval($exception->getConnection()->getContent()));
-            if (is_array($this->exceptionMessage) && empty($this->exceptionMessage['message'])) {
-                $this->exceptionMessage = $this->resolveMessage(strval($exception->getMessage()));
+            $content = $exception->getConnection()->getContent();
+            if (is_null($content)) {
+                $this->exceptionMessage = 'Request error';
+            } else {
+                $this->exceptionMessage = $this->resolveMessage($content);
             }
         } else {
             $this->exceptionMessage = $exception->getMessage();
@@ -81,16 +81,16 @@ class ServiceException extends RuntimeException
 
     /**
      * @param string $message
-     * @return mixed|string
+     * @return array
      */
-    protected function resolveMessage(?string $message = null)
+    protected function resolveMessage(string $message)
     {
-        $result = json_decode($message, true);
+        $data = json_decode($message, true);
         if (json_last_error() !== 0) {
-            $result = $message;
+            throw new UnexpectedValueException("The raw data error");
         }
 
-        return $result;
+        return app(SecretContract::class)->decrypt($data);
     }
 
     /**
@@ -106,8 +106,7 @@ class ServiceException extends RuntimeException
                 $statusCode
             );
         } else {
-            throw new Exception($this->exceptionMessage ? $this->exceptionMessage : $this->exception->getMessage(),
-                $statusCode);
+            throw new Exception($this->exceptionMessage, $statusCode);
         }
     }
 }

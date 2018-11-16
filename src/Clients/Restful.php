@@ -3,14 +3,14 @@
 namespace CrCms\Microservice\Client\Clients;
 
 use CrCms\Foundation\Client\ClientManager;
-use CrCms\Microservice\Client\Contracts\ServiceContract;
+use CrCms\Microservice\Client\Contracts\ClientContract;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class Restful
  * @package CrCms\Microservice\Client\Drivers
  */
-class Restful implements ServiceContract
+class Restful implements ClientContract
 {
     /**
      * @var array
@@ -81,7 +81,7 @@ class Restful implements ServiceContract
      * @param array $params
      * @return Restful
      */
-    public function call(array $service, array $params = []): ServiceContract
+    public function call(array $service, array $params = []): ClientContract
     {
         $this->client->connection([
             'name' => $service['name'],

@@ -9,14 +9,12 @@
 
 namespace CrCms\Microservice\Client;
 
-use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
-use CrCms\Foundation\ConnectionPool\Exceptions\RequestException;
+use CrCms\Microservice\Client\Contracts\SecretContract;
 use CrCms\Microservice\Client\Contracts\SelectorContract;
-use CrCms\Microservice\Client\Contracts\ServiceContract;
-use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use CrCms\Microservice\Client\Exceptions\ServiceException;
 use Illuminate\Contracts\Container\Container;
-use InvalidArgumentException, BadMethodCallException, DomainException;
+use DomainException, UnexpectedValueException;
+use Exception;
 
 /**
  * Class Service
@@ -25,31 +23,29 @@ use InvalidArgumentException, BadMethodCallException, DomainException;
 class Service
 {
     /**
-     * @var ServiceContract
+     * @var Container
      */
-    protected $service;
+    protected $app;
 
     /**
-     * @var ServiceDiscoverContract
+     * @var SelectorContract
      */
-    protected $serviceDiscover;
+    protected $selector;
 
     /**
-     * 重试次数
-     *
-     * @var int
+     * @var SecretContract
      */
-    protected $retry = 0;
+    protected $secret;
+
+    /**
+     * @var ServiceData|null
+     */
+    protected $content;
 
     /**
      * @var int
      */
     protected $statusCode;
-
-    /**
-     * @var object
-     */
-    protected $data;
 
     /**
      * @var ServiceFactory
@@ -67,80 +63,84 @@ class Service
     protected $connection;
 
     /**
-     * @var Container
-     */
-    protected $app;
-
-    /**
-     * @var SelectorContract
-     */
-    protected $selector;
-
-    /**
      * Service constructor.
      * @param Container $container
-     * @param ServiceDiscoverContract $serviceDiscover
+     * @param SecretContract $secret
+     * @param SelectorContract $selector
      * @param ServiceFactory $factory
      */
-    public function __construct(Container $container, SelectorContract $selector, ServiceDiscoverContract $serviceDiscover, ServiceFactory $factory)
+    public function __construct(Container $container, SecretContract $secret, SelectorContract $selector, ServiceFactory $factory)
     {
         $this->app = $container;
-        $this->serviceDiscover = $serviceDiscover;
         $this->factory = $factory;
         $this->selector = $selector;
+        $this->secret = $secret;
         $this->driver();
         $this->connection();
     }
 
     /**
      * @param null|string $name
-     * @return $this
+     * @return Service
      */
-    public function connection(?string $name = null)
+    public function connection(?string $name = null): self
     {
         $this->connection = $name ? $name : $this->app->make('config')->get('microservice-client.connection');
+
         return $this;
     }
 
     /**
-     * @param string $name
+     * @param string $service
      * @param null|string $uri
      * @param array $params
      * @return object
      */
-    public function call(string $name, ?string $uri = null, array $params = [])
+    public function call(string $service, ?string $uri = null, array $params = [])
     {
-        dd($this->secret(['call' => $uri, 'data' => $params]));
+        $data = $this->secret->encrypt($params);
+
         try {
-            $data = $this->service()->auth($this->secret($params))->call($service, ['call' => $uri, 'data' => $params]);
-        } catch (ConnectionException $exception) {
-            if ($depth > $this->retry) {
-                $this->throwException($exception);
-            }
-            return $this->whileGetConnection($service, $uri, $params, $depth += 1);
-        } catch (\Exception $exception) {
-            $this->throwException($exception);
+            $client = $this->factory->make($this->driver)->call($this->selector->select($service), array_merge(['call' => $uri], $data));
+        } catch (Exception $exception) {
+            throw new ServiceException($exception);
         } finally {
             /* 服务上报，事件触发 */
             $serverInfo = compact('service', 'uri', 'params');
             $callParams = isset($exception) ? ['microservice.call.failed', [$this, $exception, $serverInfo]] : ['microservice.call', [$this, $serverInfo]];
-
-            call_user_func_array([$this->app->make('events'), 'fire'], $callParams);
+            $this->app['events']->dispatch(...$callParams);
         }
 
-        $this->whileGetConnection(
-            $this->serviceDiscover->discover($name, $this->connection),
-            $uri, $params
-        );
+        $this->statusCode = $client->getStatusCode();
+        $content = $this->parseContent($client->getContent());
+        $this->content = $content ? new ServiceData($content) : null;
 
-        $this->data = new ServiceData($this->service()->getContent());
-
-        return $this->data;
+        return $this->content;
     }
 
-    public function status()
+    /**
+     * @param $content
+     * @return array
+     */
+    protected function parseContent($content)
     {
+        if (!is_null($content)) {
+            $parsedData = json_decode($content, true);
+            if (json_last_error() !== 0) {
+                throw new UnexpectedValueException("The raw data error");
+            }
+            $content = $this->secret->decrypt($parsedData);
+        }
 
+        return $content;
+    }
+
+    /**
+     * @return bool
+     */
+    public function status(): bool
+    {
+        return $this->statusCode >= 200 && $this->statusCode < 300;
     }
 
     /**
@@ -162,79 +162,16 @@ class Service
     }
 
     /**
-     * @param array $params
-     * @return string
-     */
-    public function secret(array $params): string
-    {
-        return openssl_encrypt(
-            serialize($params),
-            $this->app->make('config')->get('microservice-client.secret_method'),
-            $this->app->make('config')->get('microservice-client.secret', '')
-        );
-//        return hash_hmac(
-//            'ripemd256', serialize($params),
-//            (string)$this->app->make('config')->get('microservice-client.secret')
-//            (string)
-//        );
-    }
-
-    /**
-     * 循环获取连接，直到非异常连接
-     *
-     * @param array $service
-     * @param string $uri
-     * @param array $params
-     * @param int $depth
-     * @return ServiceContract
-     */
-    protected function whileGetConnection(array $service, string $uri, array $params = [], int $depth = 1): ServiceContract
-    {
-        try {
-            return $this->service()->auth($this->secret($params))->call($service, ['call' => $uri, 'data' => $params]);
-        } catch (ConnectionException $exception) {
-            if ($depth > $this->retry) {
-                $this->throwException($exception);
-            }
-            return $this->whileGetConnection($service, $uri, $params, $depth += 1);
-        } catch (\Exception $exception) {
-            $this->throwException($exception);
-        } finally {
-            /* 服务上报，事件触发 */
-            $serverInfo = compact('service', 'uri', 'params');
-            $callParams = isset($exception) ? ['microservice.call.failed', [$this, $exception, $serverInfo]] : ['microservice.call', [$this, $serverInfo]];
-
-            call_user_func_array([$this->app->make('events'), 'fire'], $callParams);
-        }
-    }
-
-    /**
-     * @param $exception
-     */
-    protected function throwException($exception)
-    {
-        throw new ServiceException($exception);
-    }
-
-    /**
-     * @return ServiceContract
-     */
-    public function service(): ServiceContract
-    {
-        if (!$this->service instanceof ServiceContract) {
-            $this->service = $this->factory->make($this->driver);
-        }
-
-        return $this->service;
-    }
-
-    /**
      * @param string $name
      * @return mixed
      */
     public function __get(string $name)
     {
-        return $this->data->{$name};
+        if (is_null($this->content)) {
+            return null;
+        }
+
+        return $this->content->data($name);
     }
 
     /**
@@ -244,16 +181,6 @@ class Service
      */
     public function __call(string $name, array $arguments)
     {
-        if (method_exists($this->service(), $name)) {
-            $result = call_user_func_array([$this->service(), $name], $arguments);
-            if ($result instanceof ServiceContract) {
-                $this->service = $result;
-                return $this;
-            }
-
-            return $result;
-        }
-
         return $this->call($name, ...$arguments);
     }
 }

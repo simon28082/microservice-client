@@ -2,8 +2,8 @@
 
 namespace CrCms\Microservice\Client;
 
-use CrCms\Microservice\Client\Contracts\ServiceContract;
-use CrCms\Microservice\Client\Drivers\Restful;
+use CrCms\Microservice\Client\Contracts\ClientContract;
+use CrCms\Microservice\Client\Clients\Restful;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 
@@ -29,9 +29,9 @@ class ServiceFactory
 
     /**
      * @param string $driver
-     * @return ServiceContract
+     * @return ClientContract
      */
-    public function make(string $driver): ServiceContract
+    public function make(string $driver): ClientContract
     {
         $config = $this->app->make('config')->get("microservice-client.clients.{$driver}");
 

@@ -9,24 +9,15 @@
 
 namespace CrCms\Microservice\Client\Contracts;
 
-use CrCms\Foundation\Client\Manager;
-
-interface ServiceContract
+interface ClientContract
 {
     /**
      * @param array $service
      * @param string $uri
      * @param array $params
-     * @return ServiceContract
+     * @return ClientContract
      */
-    public function call(array $service, array $params = []): ServiceContract;
-
-    /**
-     * @param string $key
-     * @param string $passowrd
-     * @return ServiceContract
-     */
-    public function auth(string $key, string $passowrd = ''): ServiceContract;
+    public function call(array $service, array $params = []): ClientContract;
 
     /**
      * @return int

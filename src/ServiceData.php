@@ -4,6 +4,7 @@ namespace CrCms\Microservice\Client;
 
 use BadMethodCallException;
 use ArrayAccess;
+use UnexpectedValueException;
 
 /**
  * Class ServiceData
@@ -20,22 +21,23 @@ class ServiceData implements ArrayAccess
      * ServiceData constructor.
      * @param $data
      */
-    public function __construct($data)
+    public function __construct($data = null)
     {
-        $this->data = $this->resolveData($data);
+        $this->data = $data ? $this->resolveData($data) : null;
     }
 
     /**
      * @param $data
-     * @return mixed|null
+     * @return object
      */
     protected function resolveData($data)
     {
-        if ((bool)($newData = json_decode($data)) && json_last_error() === 0) {
-            return $newData;
-        } else {
-            return null;
+        $newData = json_decode($data);
+        if (json_last_error() !== 0) {
+            throw new UnexpectedValueException("Parse error, The data {$data}");
         }
+
+        return $newData;
     }
 
     /**
@@ -45,7 +47,10 @@ class ServiceData implements ArrayAccess
      */
     public function data(string $key, $default = null)
     {
-        return data_get($this->data, $key);
+        if (is_null($this->data)) {
+            return $default;
+        }
+        return data_get($this->data, $key, $default);
     }
 
     /**
@@ -71,7 +76,7 @@ class ServiceData implements ArrayAccess
             return false;
         }
 
-        return isset($this->data->$offset);
+        return $this->data($offset, '--$--') !== '--$--';
     }
 
     /**
@@ -80,11 +85,7 @@ class ServiceData implements ArrayAccess
      */
     public function offsetGet($offset)
     {
-        if ($this->offsetExists($offset)) {
-            return $this->data->$offset;
-        }
-
-        return null;
+        return $this->data($offset, null);
     }
 
     /**
