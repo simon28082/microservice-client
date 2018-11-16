@@ -12,6 +12,7 @@ namespace CrCms\Microservice\Client;
 use CrCms\Microservice\Client\Contracts\SecretContract;
 use CrCms\Microservice\Client\Contracts\SelectorContract;
 use CrCms\Microservice\Client\Exceptions\ServiceException;
+use GuzzleHttp\Promise\Promise;
 use Illuminate\Contracts\Container\Container;
 use DomainException, UnexpectedValueException;
 use Exception;
@@ -63,6 +64,11 @@ class Service
     protected $connection;
 
     /**
+     * @var Promise
+     */
+    protected $promise;
+
+    /**
      * Service constructor.
      * @param Container $container
      * @param SecretContract $secret
@@ -80,14 +86,41 @@ class Service
     }
 
     /**
-     * @param null|string $name
-     * @return Service
+     * @param string $service
+     * @param string $uri
+     * @param array $params
+     * @return mixed
      */
-    public function connection(?string $name = null): self
+    public function call(string $service, $uri = '', array $params = [], bool $async = false)
     {
-        $this->connection = $name ? $name : $this->app->make('config')->get('microservice-client.connection');
+        $this->promise = new Promise(function ($params) {//use ($service, $uri, $params)
+            return $this->execute(...$params);
+        });
 
-        return $this;
+        $this->promise->resolve([$service, $uri, $params]);
+
+        if ($async) {
+            return $this->promise;
+        }
+
+        $this->promise->then(function(){
+            return $this->content;
+        }, function (ServiceException $exception) {
+            throw new $exception;
+        });
+
+        return $this->promise->wait();
+    }
+
+    /**
+     * @param string $service
+     * @param string $uri
+     * @param array $params
+     * @return Promise
+     */
+    public function callAsync(string $service, $uri = '', array $params = []): Promise
+    {
+        return $this->call($service, $uri, $params, true);
     }
 
     /**
@@ -96,7 +129,7 @@ class Service
      * @param array $params
      * @return object
      */
-    public function call(string $service, $uri = '', array $params = [])
+    protected function execute(string $service, $uri = '', array $params = [])
     {
         if (is_array($uri) || empty($uri)) {
             $params = $uri ?? [];
@@ -110,7 +143,9 @@ class Service
         try {
             $client = $this->factory->make($this->driver)->call($this->selector->select($service), array_merge(['call' => $uri], $data));
         } catch (Exception $exception) {
-            throw new ServiceException($exception);
+            $this->promise->reject(new ServiceException($exception));
+            return;
+            //throw new ServiceException($exception);
         } finally {
             /* 服务上报，事件触发 */
             $serverInfo = compact('service', 'uri', 'params');
@@ -123,23 +158,7 @@ class Service
         $this->content = $content ? new ServiceData($content) : null;
 
         return $this->content;
-    }
-
-    /**
-     * @param $content
-     * @return array
-     */
-    protected function parseContent($content)
-    {
-        if (!is_null($content)) {
-            $parsedData = json_decode($content, true);
-            if (json_last_error() !== 0) {
-                throw new UnexpectedValueException("The raw data error");
-            }
-            $content = $this->secret->decrypt($parsedData);
-        }
-
-        return $content;
+        //$this->promise->resolve();
     }
 
     /**
@@ -166,6 +185,34 @@ class Service
         $this->driver = $driver;
 
         return $this;
+    }
+
+    /**
+     * @param null|string $name
+     * @return Service
+     */
+    public function connection(?string $name = null): self
+    {
+        $this->connection = $name ? $name : $this->app->make('config')->get('microservice-client.connection');
+
+        return $this;
+    }
+
+    /**
+     * @param $content
+     * @return array
+     */
+    protected function parseContent($content)
+    {
+        if (!is_null($content)) {
+            $parsedData = json_decode($content, true);
+            if (json_last_error() !== 0) {
+                throw new UnexpectedValueException("The raw data error");
+            }
+            $content = $this->secret->decrypt($parsedData);
+        }
+
+        return $content;
     }
 
     /**
