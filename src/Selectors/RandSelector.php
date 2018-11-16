@@ -10,6 +10,7 @@
 namespace CrCms\Microservice\Client\Selectors;
 
 use CrCms\Microservice\Client\Contracts\SelectorContract;
+use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 
 /**
  * Class RandSelector
@@ -18,11 +19,12 @@ use CrCms\Microservice\Client\Contracts\SelectorContract;
 class RandSelector implements SelectorContract
 {
     /**
-     * @param array $services
+     * @param ServiceDiscoverContract $discover
      * @return array
      */
-    public function select(array $services): array
+    public function select(ServiceDiscoverContract $discover): array
     {
+        $services = $discover->services();
         return $services[array_rand($services)];
     }
 }

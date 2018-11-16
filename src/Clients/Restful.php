@@ -114,15 +114,4 @@ class Restful implements ServiceContract
     {
         return $this->content;
     }
-
-    /**
-     * @param string $key
-     * @param string $password
-     * @return ServiceContract
-     */
-    public function auth(string $key, string $password = ''): ServiceContract
-    {
-        $this->headers['X-CRCMS-Microservice-Hash'] = $key;
-        return $this;
-    }
 }

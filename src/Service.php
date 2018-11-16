@@ -11,6 +11,7 @@ namespace CrCms\Microservice\Client;
 
 use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
 use CrCms\Foundation\ConnectionPool\Exceptions\RequestException;
+use CrCms\Microservice\Client\Contracts\SelectorContract;
 use CrCms\Microservice\Client\Contracts\ServiceContract;
 use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use CrCms\Microservice\Client\Exceptions\ServiceException;
@@ -71,16 +72,22 @@ class Service
     protected $app;
 
     /**
+     * @var SelectorContract
+     */
+    protected $selector;
+
+    /**
      * Service constructor.
      * @param Container $container
      * @param ServiceDiscoverContract $serviceDiscover
      * @param ServiceFactory $factory
      */
-    public function __construct(Container $container, ServiceDiscoverContract $serviceDiscover, ServiceFactory $factory)
+    public function __construct(Container $container, SelectorContract $selector, ServiceDiscoverContract $serviceDiscover, ServiceFactory $factory)
     {
         $this->app = $container;
         $this->serviceDiscover = $serviceDiscover;
         $this->factory = $factory;
+        $this->selector = $selector;
         $this->driver();
         $this->connection();
     }
@@ -91,8 +98,7 @@ class Service
      */
     public function connection(?string $name = null)
     {
-        $this->connection = $name ? $name : $this->app->make('config')->get('microservice-client.default');
-
+        $this->connection = $name ? $name : $this->app->make('config')->get('microservice-client.connection');
         return $this;
     }
 
@@ -104,6 +110,24 @@ class Service
      */
     public function call(string $name, ?string $uri = null, array $params = [])
     {
+        dd($this->secret(['call' => $uri, 'data' => $params]));
+        try {
+            $data = $this->service()->auth($this->secret($params))->call($service, ['call' => $uri, 'data' => $params]);
+        } catch (ConnectionException $exception) {
+            if ($depth > $this->retry) {
+                $this->throwException($exception);
+            }
+            return $this->whileGetConnection($service, $uri, $params, $depth += 1);
+        } catch (\Exception $exception) {
+            $this->throwException($exception);
+        } finally {
+            /* 服务上报，事件触发 */
+            $serverInfo = compact('service', 'uri', 'params');
+            $callParams = isset($exception) ? ['microservice.call.failed', [$this, $exception, $serverInfo]] : ['microservice.call', [$this, $serverInfo]];
+
+            call_user_func_array([$this->app->make('events'), 'fire'], $callParams);
+        }
+
         $this->whileGetConnection(
             $this->serviceDiscover->discover($name, $this->connection),
             $uri, $params
@@ -112,6 +136,11 @@ class Service
         $this->data = new ServiceData($this->service()->getContent());
 
         return $this->data;
+    }
+
+    public function status()
+    {
+
     }
 
     /**
@@ -138,10 +167,16 @@ class Service
      */
     public function secret(array $params): string
     {
-        return hash_hmac(
-            'ripemd256', serialize($params),
-            (string)$this->app->make('config')->get('microservice-client.secret')
+        return openssl_encrypt(
+            serialize($params),
+            $this->app->make('config')->get('microservice-client.secret_method'),
+            $this->app->make('config')->get('microservice-client.secret', '')
         );
+//        return hash_hmac(
+//            'ripemd256', serialize($params),
+//            (string)$this->app->make('config')->get('microservice-client.secret')
+//            (string)
+//        );
     }
 
     /**

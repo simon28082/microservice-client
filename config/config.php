@@ -104,6 +104,8 @@ return [
 
     'secret' => env('SERVICE_SECRET', null),
 
+    'secret_method' => env('SERVICE_SECRET_METHOD', 'AES-256-CFB'),
+
     /*
     |--------------------------------------------------------------------------
     | Services selector

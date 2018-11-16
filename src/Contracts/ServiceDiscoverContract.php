@@ -9,8 +9,7 @@ namespace CrCms\Microservice\Client\Contracts;
 interface ServiceDiscoverContract
 {
     /**
-     * @param array $config
      * @return array
      */
-    public function services(array $config): array;
+    public function services(): array;
 }

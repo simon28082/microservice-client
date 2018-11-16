@@ -26,10 +26,9 @@ class Local implements ServiceDiscoverContract
     }
 
     /**
-     * @param array $config
      * @return array
      */
-    public function services(array $config): array
+    public function services(): array
     {
         return $this->app->make('config')->get("microservice-client.connections.local.discover");
     }

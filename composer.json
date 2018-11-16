@@ -18,7 +18,7 @@
     "files": [
     ],
     "psr-4": {
-      "CrCms\\Foundation\\MicroService\\Client\\": "src/"
+      "CrCms\\Microservice\\Client\\": "src/"
     }
   },
   "autoload-dev": {
@@ -29,7 +29,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "CrCms\\Microservice\\Client\\MicroServiceClientProvider"
+        "CrCms\\Microservice\\Client\\MicroserviceClientProvider"
       ],
       "aliases": {
       }

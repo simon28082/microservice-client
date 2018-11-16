@@ -21,7 +21,7 @@ use Laravel\Lumen\Application;
  * Class MicroServiceProvider
  * @package CrCms\Foundation\Rpc
  */
-class MicroServiceClientProvider extends ServiceProvider
+class MicroserviceClientProvider extends ServiceProvider
 {
     /**
      * @var bool

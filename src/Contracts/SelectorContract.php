@@ -12,8 +12,8 @@ namespace CrCms\Microservice\Client\Contracts;
 interface SelectorContract
 {
     /**
-     * @param array $connections
+     * @param ServiceDiscoverContract $discover
      * @return array
      */
-    public function select(array $connections): array;
+    public function select(ServiceDiscoverContract $discover): array;
 }
