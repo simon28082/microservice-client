@@ -91,7 +91,7 @@ class MicroserviceClientProvider extends ServiceProvider
         });
 
         $this->app->singleton('microservice-client.selector', function ($app) {
-            return new RandSelector($app['microservice-client.discovery']);
+            return new RandSelector($app['microservice-client.discover']);
         });
 
         $this->app->singleton('microservice-client.sceret', function ($app) {
