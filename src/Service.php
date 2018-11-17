@@ -125,13 +125,13 @@ class Service
     protected function execute(string $service, $uri = '', array $params = [])
     {
         if (is_array($uri) || empty($uri)) {
-            $params = $uri ?? [];
+            $params = $uri ? $uri : [];
             $url = explode('.', $service);
             $service = array_shift($url);
             $uri = implode('.', $url);
         }
 
-        $data = $this->secret->encrypt($params);
+        $data = $params ? $this->secret->encrypt($params) : $params;
 
         try {
             $client = $this->factory->make($this->driver)->call($this->selector->select($service), array_merge(['call' => $uri], $data));
@@ -215,7 +215,7 @@ class Service
             if (json_last_error() !== 0) {
                 throw new UnexpectedValueException("The raw data error");
             }
-            $content = $this->secret->decrypt($parsedData);
+            $content = $parsedData ? $this->secret->decrypt($parsedData) : null;
         }
 
         return $content;
