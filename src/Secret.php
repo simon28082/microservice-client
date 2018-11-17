@@ -39,7 +39,7 @@ class Secret implements SecretContract
     public function encrypt(array $data): array
     {
         if ($this->options['status'] === false) {
-            return $data;
+            return ['data' => $data];
         }
 
         $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($this->options['cipher']));
