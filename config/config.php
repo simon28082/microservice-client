@@ -37,9 +37,9 @@ return [
                 'port' => env('SERVICE_DISCOVER_PORT', 8500),
                 'uri' => 'v1/catalog/service',
             ],
-            'ssl' => [
+            /*'ssl' => [
                 'assistant' => 'v.csr'
-            ],
+            ],*/
             'services' => [],
         ],
 
@@ -48,16 +48,16 @@ return [
                 [
                     "id" => "assistant_1",
                     "name" => "assistant",
-                    "host" => "assistant.test",
-                    "port" => 80,
+                    "host" => "192.168.1.251",
+                    "port" => 2222,
                 ], // or  ServiceName
             ],
             'services' => [
                 'assistant'
             ],
-            'ssl' => [
+            /*'ssl' => [
                 'assistant' => 'v.csr'
-            ]
+            ]*/
         ],
 
     ],
@@ -78,6 +78,7 @@ return [
             'driver' => 'http',
             'options' => [
                 'timeout' => 1,
+                //'verify' => resource_path('ssl/cacert.pem'),
             ],
         ]
     ],
