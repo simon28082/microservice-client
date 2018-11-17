@@ -98,7 +98,7 @@ class MicroserviceClientProvider extends ServiceProvider
             return new Secret($app['config']);
         });
 
-        $this->app->singleton('microservice-client.discovery', function ($app) {
+        $this->app->singleton('microservice-client.discover', function ($app) {
             //return new ServiceDiscover($app, $app->make('microservice-client.discovery.selector'), $app->make('client.manager'));
             return new Local($app);
         });
@@ -124,7 +124,7 @@ class MicroserviceClientProvider extends ServiceProvider
      */
     protected function registerAlias(): void
     {
-        $this->app->alias('microservice-client.discovery', ServiceDiscoverContract::class);
+        $this->app->alias('microservice-client.discover', ServiceDiscoverContract::class);
         $this->app->alias('microservice-client.selector', SelectorContract::class);
         $this->app->alias('microservice-client.sceret', SecretContract::class);
     }
