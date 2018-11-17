@@ -210,7 +210,7 @@ class Service
      */
     protected function parseContent($content)
     {
-        if (!is_null($content)) {
+        if (!empty($content)) {
             $parsedData = json_decode($content, true);
             if (json_last_error() !== 0) {
                 throw new UnexpectedValueException("The raw data error");

@@ -16,9 +16,10 @@ class Restful implements ClientContract
      * @var array
      */
     protected $headers = [
-        'User-Agent' => 'CRCMS-MICRO-SERVER PHP Client',
+        'User-Agent' => 'CRCMS-Microservice PHP Client',
         'Content-Type' => 'application/json',
         'Accept' => 'application/json',
+        'Connection' => 'keep-alive',
     ];
 
     /**

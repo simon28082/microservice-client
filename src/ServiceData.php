@@ -23,7 +23,7 @@ class ServiceData implements ArrayAccess
      */
     public function __construct($data = null)
     {
-        $this->data = $data ? $this->resolveData($data) : null;
+        $this->data = $data;
     }
 
     /**
