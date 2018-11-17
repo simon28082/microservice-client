@@ -91,25 +91,9 @@ class Service
      * @param array $params
      * @return mixed
      */
-    public function call(string $service, $uri = '', array $params = [], bool $async = false)
+    public function call(string $service, $uri = '', array $params = [])
     {
-        $this->promise = new Promise(function ($params) {//use ($service, $uri, $params)
-            return $this->execute(...$params);
-        });
-
-        $this->promise->resolve([$service, $uri, $params]);
-
-        if ($async) {
-            return $this->promise;
-        }
-
-        $this->promise->then(function(){
-            return $this->content;
-        }, function (ServiceException $exception) {
-            throw new $exception;
-        });
-
-        return $this->promise->wait();
+        return $this->execute($service, $uri, $params);
     }
 
     /**
@@ -120,7 +104,16 @@ class Service
      */
     public function callAsync(string $service, $uri = '', array $params = []): Promise
     {
-        return $this->call($service, $uri, $params, true);
+        $this->promise = new Promise();
+
+        try {
+            $content = $this->execute($service, $uri, $params);
+            $this->promise->resolve($content);
+        } catch (ServiceException $exception) {
+            $this->promise->reject($exception);
+        }
+
+        return $this->promise;
     }
 
     /**
@@ -143,9 +136,7 @@ class Service
         try {
             $client = $this->factory->make($this->driver)->call($this->selector->select($service), array_merge(['call' => $uri], $data));
         } catch (Exception $exception) {
-            $this->promise->reject(new ServiceException($exception));
-            return;
-            //throw new ServiceException($exception);
+            throw new ServiceException($exception);
         } finally {
             /* 服务上报，事件触发 */
             $serverInfo = compact('service', 'uri', 'params');
@@ -158,7 +149,6 @@ class Service
         $this->content = $content ? new ServiceData($content) : null;
 
         return $this->content;
-        //$this->promise->resolve();
     }
 
     /**
