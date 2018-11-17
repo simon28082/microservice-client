@@ -107,8 +107,8 @@ class Service
         $this->promise = new Promise();
 
         try {
-            $content = $this->execute($service, $uri, $params);
-            $this->promise->resolve($content);
+            $this->execute($service, $uri, $params);
+            $this->promise->resolve($this);
         } catch (ServiceException $exception) {
             $this->promise->reject($exception);
         }
@@ -157,6 +157,22 @@ class Service
     public function status(): bool
     {
         return $this->statusCode >= 200 && $this->statusCode < 300;
+    }
+
+    /**
+     * @return ServiceData|null
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
     }
 
     /**
