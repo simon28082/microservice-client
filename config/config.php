@@ -101,7 +101,7 @@ return [
     |
     */
 
-    'secret_status' => env('SECRET_STATUS',true),
+    'secret_status' => env('SERVICE_SECRET_STATUS',true),
 
     /*
     |--------------------------------------------------------------------------
@@ -110,7 +110,7 @@ return [
     |
     */
 
-    'secret' => env('SECRET','#1#2@!##'),
+    'secret' => env('SERVICE_SECRET','#1#2@!##'),
 
     /*
     |--------------------------------------------------------------------------
@@ -119,7 +119,7 @@ return [
     |
     */
 
-    'secret_cipher' => env('SECRET_CIPHER','AES-256-CFB'),
+    'secret_cipher' => env('SERVICE_SECRET_CIPHER','AES-256-CFB'),
 
     /*
     |--------------------------------------------------------------------------
