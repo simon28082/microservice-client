@@ -4,7 +4,7 @@ namespace CrCms\Microservice\Client\Exceptions;
 
 use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
 use CrCms\Foundation\ConnectionPool\Exceptions\RequestException;
-use CrCms\Microservice\Client\Contracts\SecretContract;
+use CrCms\Microservice\Client\Packer\Packer;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 use Exception;
@@ -87,10 +87,10 @@ class ServiceException extends RuntimeException
     {
         $data = json_decode($message, true);
         if (json_last_error() !== 0) {
-            throw new UnexpectedValueException("The raw data error");
+            throw new UnexpectedValueException("The raw data error " . json_last_error_msg());
         }
 
-        return app(SecretContract::class)->decrypt($data);
+        return app(Packer::class)->unpack($data['data'], config('microservice-client.secret_status'));
     }
 
     /**

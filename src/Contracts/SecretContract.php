@@ -10,13 +10,19 @@ interface SecretContract
 {
     /**
      * @param array $data
-     * @return array
+     * @return string
      */
-    public function encrypt(array $data): array;
+    public function encrypt(array $data): string;
 
     /**
-     * @param array $data
+     * @param string $data
+     * @param string $iv
      * @return array
      */
-    public function decrypt(array $data): array;
+    public function decrypt(string $data, string $iv): array;
+
+    /**
+     * @return string
+     */
+    public function getIv(): string;
 }

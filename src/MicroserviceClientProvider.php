@@ -12,6 +12,8 @@ namespace CrCms\Microservice\Client;
 use CrCms\Foundation\Client\ClientServiceProvider;
 use CrCms\Microservice\Client\Contracts\SecretContract;
 use CrCms\Microservice\Client\Contracts\SelectorContract;
+use CrCms\Microservice\Client\Packer\Packer;
+use CrCms\Microservice\Client\Packer\Secret;
 use CrCms\Microservice\Client\Selectors\RandSelector;
 use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use CrCms\Microservice\Client\Services\Local;
@@ -56,8 +58,8 @@ class MicroserviceClientProvider extends ServiceProvider
 
         //event listen
         foreach ($this->app->make('config')->get('microservice-client.events', []) as $event) {
-            Event::listen('microservice.call', $event.'@handle');
-            Event::listen('microservice.call.failed', $event.'@failed');
+            Event::listen('microservice.call', $event . '@handle');
+            Event::listen('microservice.call.failed', $event . '@failed');
         }
     }
 
@@ -95,7 +97,14 @@ class MicroserviceClientProvider extends ServiceProvider
         });
 
         $this->app->singleton('microservice-client.sceret', function ($app) {
-            return new Secret($app['config']);
+            return new Secret(
+                $app['config']->get('microservice-client.secret'),
+                $app['config']->get('microservice-client.secret_cipher')
+            );
+        });
+
+        $this->app->singleton('microservice-client.packer', function ($app) {
+            return new Packer($app['microservice-client.sceret']);
         });
 
         $this->app->singleton('microservice-client.discover', function ($app) {
@@ -127,6 +136,7 @@ class MicroserviceClientProvider extends ServiceProvider
         $this->app->alias('microservice-client.discover', ServiceDiscoverContract::class);
         $this->app->alias('microservice-client.selector', SelectorContract::class);
         $this->app->alias('microservice-client.sceret', SecretContract::class);
+        $this->app->alias('microservice-client.packer', Packer::class);
     }
 
     /**
@@ -139,6 +149,7 @@ class MicroserviceClientProvider extends ServiceProvider
             SelectorContract::class,
             ServiceFactory::class,
             SecretContract::class,
+            'microservice-client.packer'
         ];
     }
 }

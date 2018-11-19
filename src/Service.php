@@ -12,6 +12,7 @@ namespace CrCms\Microservice\Client;
 use CrCms\Microservice\Client\Contracts\SecretContract;
 use CrCms\Microservice\Client\Contracts\SelectorContract;
 use CrCms\Microservice\Client\Exceptions\ServiceException;
+use CrCms\Microservice\Client\Packer\Packer;
 use GuzzleHttp\Promise\Promise;
 use Illuminate\Contracts\Container\Container;
 use DomainException, UnexpectedValueException;
@@ -34,9 +35,9 @@ class Service
     protected $selector;
 
     /**
-     * @var SecretContract
+     * @var Packer
      */
-    protected $secret;
+    protected $packer;
 
     /**
      * @var ServiceData|null
@@ -71,16 +72,16 @@ class Service
     /**
      * Service constructor.
      * @param Container $container
-     * @param SecretContract $secret
+     * @param Packer $packer
      * @param SelectorContract $selector
      * @param ServiceFactory $factory
      */
-    public function __construct(Container $container, SecretContract $secret, SelectorContract $selector, ServiceFactory $factory)
+    public function __construct(Container $container, Packer $packer, SelectorContract $selector, ServiceFactory $factory)
     {
         $this->app = $container;
         $this->factory = $factory;
         $this->selector = $selector;
-        $this->secret = $secret;
+        $this->packer = $packer;
         $this->driver();
         $this->connection();
     }
@@ -131,10 +132,13 @@ class Service
             $uri = implode('.', $url);
         }
 
-        $data = $params ? $this->secret->encrypt($params) : $params;
+        $data = $this->packer->pack(
+            $params ? ['call' => $uri, 'data' => $params] : ['call' => $uri],
+            $this->app->make('config')->get('microservice-client.secret_status')
+        );
 
         try {
-            $client = $this->factory->make($this->driver)->call($this->selector->select($service), array_merge(['call' => $uri], $data));
+            $client = $this->factory->make($this->driver)->call($this->selector->select($service), ['data' => $data]);
         } catch (Exception $exception) {
             throw new ServiceException($exception);
         } finally {
@@ -146,9 +150,31 @@ class Service
 
         $this->statusCode = $client->getStatusCode();
         $content = $this->parseContent($client->getContent());
-        $this->content = $content ? new ServiceData($content) : null;
+        $this->content = $content ? new ServiceData($this->packer->unpack(
+            $content,
+            $this->app->make('config')->get('microservice-client.secret_status')
+        )) : null;
 
         return $this->content;
+    }
+
+    /**
+     * @param $content
+     * @return string
+     */
+    protected function parseContent($content)
+    {
+        /* http 204 */
+        if (empty($content)) {
+            return null;
+        }
+
+        $data = json_decode($content, true);
+        if (json_last_error() !== 0) {
+            throw new UnexpectedValueException("The raw data error:" . json_last_error_msg());
+        }
+
+        return $data['data'];
     }
 
     /**
@@ -202,23 +228,6 @@ class Service
         $this->connection = $name ? $name : $this->app->make('config')->get('microservice-client.connection');
 
         return $this;
-    }
-
-    /**
-     * @param $content
-     * @return array
-     */
-    protected function parseContent($content)
-    {
-        if (!empty($content)) {
-            $parsedData = json_decode($content, true);
-            if (json_last_error() !== 0) {
-                throw new UnexpectedValueException("The raw data error");
-            }
-            $content = $parsedData ? $this->secret->decrypt($parsedData) : null;
-        }
-
-        return $content;
     }
 
     /**
