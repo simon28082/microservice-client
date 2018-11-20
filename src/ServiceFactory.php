@@ -37,9 +37,17 @@ class ServiceFactory
 
         switch ($config['name']) {
             case 'restful':
-                return new Restful($this->app->make('client.manager'), $config);
+                return new Restful($this->app->make('client.manager'), $config, $options);
         }
 
         throw new InvalidArgumentException("Unsupported driver [{$config['name']}]");
+    }
+
+    /**
+     * @return array
+     */
+    protected function serviceConfig(): array
+    {
+        return $this->app->make('config')->get("microservice-client.service_options", []);
     }
 }

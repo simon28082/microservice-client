@@ -37,24 +37,30 @@ return [
                 'port' => env('SERVICE_DISCOVER_PORT', 8500),
                 'uri' => 'v1/catalog/service',
             ],
-            /*'ssl' => [
-                'assistant' => 'v.csr'
-            ],*/
-            'services' => [],
         ],
 
         'local' => [
             'discover' => [
                 'path' => env('SERVICE_DISCOVER_PATH', resource_path('micorservice-discover.json'))
             ],
-            'services' => [
-                'assistant'
-            ],
-            /*'ssl' => [
-                'assistant' => 'v.csr'
-            ]*/
         ],
+    ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Service request options
+    |--------------------------------------------------------------------------
+    |
+    | Additional options for each service initiation request, such as timeout, SSL encryption certificate verification, etc.
+    |
+    */
+
+    'service_options' => [
+        /* example */
+        /*'server' => [
+            'timeout' => 1,
+            'verify' => resource_path('ssl/cacert.pem'),
+        ]*/
     ],
 
     /*
@@ -68,15 +74,15 @@ return [
     */
 
     'clients' => [
-    'restful' => [
-        'name' => 'restful',
-        'driver' => 'http',
-        'options' => [
-            'timeout' => 1,
-            //'verify' => resource_path('ssl/cacert.pem'),
-        ],
-    ]
-],
+        'restful' => [
+            'name' => 'restful',
+            'driver' => 'http',
+            'options' => [
+                'timeout' => 1,
+                //'verify' => resource_path('ssl/cacert.pem'),
+            ],
+        ]
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -139,5 +145,5 @@ return [
 
     'events' => [
 
-]
+    ]
 ];

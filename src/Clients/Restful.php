@@ -55,14 +55,21 @@ class Restful implements ClientContract
     protected $client;
 
     /**
+     * @var array
+     */
+    protected $options;
+
+    /**
      * Restful constructor.
      * @param ClientManager $manager
      * @param array $config
+     * @param array $options
      */
-    public function __construct(ClientManager $manager, array $config)
+    public function __construct(ClientManager $manager, array $config, array $options)
     {
         $this->client = $manager;
         $this->config = $config;
+        $this->options = $options;
     }
 
     /**
@@ -78,7 +85,7 @@ class Restful implements ClientContract
             'driver' => $this->config['driver'],
             'host' => $service['host'],
             'port' => $service['port'],
-            'settings' => array_merge($this->defaultConfig, $this->config['options']),
+            'settings' => array_merge($this->defaultConfig, $this->config['options'], ($this->options[$service['name']] ?? [])),
         ])->handle('/', ['headers' => $this->headers, 'method' => $this->method, 'payload' => $params]);
 
         $this->statusCode = $this->client->getStatusCode();
