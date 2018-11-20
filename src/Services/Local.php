@@ -5,7 +5,9 @@ namespace CrCms\Microservice\Client\Services;
 use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Collection;
-use RangeException;
+use InvalidArgumentException;
+use UnexpectedValueException;
+use OutOfBoundsException;
 
 /**
  * Class Local
@@ -19,12 +21,24 @@ class Local implements ServiceDiscoverContract
     protected $app;
 
     /**
+     * @var array
+     */
+    protected $services;
+
+    /**
+     * @var array
+     */
+    protected $config;
+
+    /**
      * Local constructor.
      * @param Container $app
+     * @param array $config
      */
-    public function __construct(Container $app)
+    public function __construct(Container $app, array $config)
     {
         $this->app = $app;
+        $this->config = $config;
     }
 
     /**
@@ -33,15 +47,36 @@ class Local implements ServiceDiscoverContract
      */
     public function services(string $service): array
     {
-        $result = Collection::make(
-            $this->app->make('config')->get("microservice-client.connections.local.discover")
-        )->groupBy('name')->get($service);
+        if (empty($this->services[$service])) {
+            $services = $this->readServices()->get($service);
+            if (empty($services)) {
+                throw new OutOfBoundsException("The service: {$service} not found");
+            }
 
-        if (is_null($result)) {
-            throw new RangeException("The service[{$service}] not found");
+            $this->services[$service] = $services;
+            unset($services);
         }
 
-        return $result->toArray();
+        return $this->services[$service];
+    }
+
+    /**
+     * @return Collection
+     */
+    protected function readServices(): Collection
+    {
+        $path = $this->config['discover']['path'];
+        if (!file_exists($path)) {
+            throw new InvalidArgumentException("The file[{$path}] not found");
+        }
+
+        $content = file_get_contents($path);
+        $services = json_decode($content, true);
+        if (json_last_error() !== 0) {
+            throw new UnexpectedValueException("The services resolve error");
+        }
+
+        return Collection::make($services)->groupBy('name');
     }
 }
 

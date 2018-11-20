@@ -45,12 +45,7 @@ return [
 
         'local' => [
             'discover' => [
-                [
-                    "id" => "assistant_1",
-                    "name" => "assistant",
-                    "host" => "192.168.1.251",
-                    "port" => 2222,
-                ], // or  ServiceName
+                'path' => env('SERVICE_DISCOVER_PATH', resource_path('micorservice-discover.json'))
             ],
             'services' => [
                 'assistant'
@@ -73,15 +68,15 @@ return [
     */
 
     'clients' => [
-        'restful' => [
-            'name' => 'restful',
-            'driver' => 'http',
-            'options' => [
-                'timeout' => 1,
-                //'verify' => resource_path('ssl/cacert.pem'),
-            ],
-        ]
-    ],
+    'restful' => [
+        'name' => 'restful',
+        'driver' => 'http',
+        'options' => [
+            'timeout' => 1,
+            //'verify' => resource_path('ssl/cacert.pem'),
+        ],
+    ]
+],
 
     /*
     |--------------------------------------------------------------------------
@@ -101,7 +96,7 @@ return [
     |
     */
 
-    'secret_status' => env('SERVICE_SECRET_STATUS',true),
+    'secret_status' => env('SERVICE_SECRET_STATUS', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -110,7 +105,7 @@ return [
     |
     */
 
-    'secret' => env('SERVICE_SECRET','#1#2@!##'),
+    'secret' => env('SERVICE_SECRET', '#1#2@!##'),
 
     /*
     |--------------------------------------------------------------------------
@@ -119,7 +114,7 @@ return [
     |
     */
 
-    'secret_cipher' => env('SERVICE_SECRET_CIPHER','AES-256-CFB'),
+    'secret_cipher' => env('SERVICE_SECRET_CIPHER', 'AES-256-CFB'),
 
     /*
     |--------------------------------------------------------------------------
@@ -144,5 +139,5 @@ return [
 
     'events' => [
 
-    ]
+]
 ];

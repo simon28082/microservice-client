@@ -108,8 +108,7 @@ class MicroserviceClientProvider extends ServiceProvider
         });
 
         $this->app->singleton('microservice-client.discover', function ($app) {
-            //return new ServiceDiscover($app, $app->make('microservice-client.discovery.selector'), $app->make('client.manager'));
-            return new Local($app);
+            return new Local($app, $app['config']->get('microservice-client.connections.local'));
         });
     }
 
