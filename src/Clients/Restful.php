@@ -19,7 +19,8 @@ class Restful implements ClientContract
         'User-Agent' => 'CRCMS-Microservice PHP Client',
         'Content-Type' => 'application/json',
         'Accept' => 'application/json',
-        //'Connection' => 'keep-alive',
+        'Accept-Encoding' => 'gzip,deflate,br',
+        'Connection' => 'keep-alive',
     ];
 
     /**
