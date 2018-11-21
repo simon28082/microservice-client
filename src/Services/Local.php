@@ -48,12 +48,12 @@ class Local implements ServiceDiscoverContract
     public function services(string $service): array
     {
         if (empty($this->services[$service])) {
-            $services = $this->readServices()->get($service);
-            if (empty($services)) {
+            $services = $this->readServices();
+            if (empty($services[$service])) {
                 throw new OutOfBoundsException("The service: {$service} not found");
             }
 
-            $this->services[$service] = $services;
+            $this->services[$service] = $services[$service];
             unset($services);
         }
 
@@ -61,9 +61,9 @@ class Local implements ServiceDiscoverContract
     }
 
     /**
-     * @return Collection
+     * @return array
      */
-    protected function readServices(): Collection
+    protected function readServices(): array
     {
         $path = $this->config['discover']['path'];
         if (!file_exists($path)) {
@@ -76,7 +76,7 @@ class Local implements ServiceDiscoverContract
             throw new UnexpectedValueException("The services resolve error");
         }
 
-        return Collection::make($services)->groupBy('name');
+        return Collection::make($services)->groupBy('name')->toArray();
     }
 }
 
