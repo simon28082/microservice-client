@@ -41,7 +41,7 @@ return [
 
         'local' => [
             'discover' => [
-                'path' => env('SERVICE_DISCOVER_PATH', resource_path('micorservice-discover.json'))
+                'path' => env('SERVICE_DISCOVER_PATH', storage_path('micorservice-discover.json'))
             ],
         ],
     ],
