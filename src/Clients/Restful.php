@@ -85,7 +85,7 @@ class Restful implements ClientContract
             'driver' => $this->config['driver'],
             'host' => $service['host'],
             'port' => $service['port'],
-            'settings' => array_merge($this->defaultConfig, $this->config['options'], ($this->options[$service['name']] ?? [])),
+            'settings' => array_merge($this->defaultConfig, $this->config['options'] ?? [], $this->options[$service['name']] ?? []),
         ])->handle('/', ['headers' => $this->headers, 'method' => $this->method, 'payload' => $params]);
 
         $this->statusCode = $this->client->getStatusCode();
