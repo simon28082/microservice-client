@@ -1,12 +1,12 @@
 <?php
 
-namespace CrCms\Foundation\MicroService\Client\Concerns;
+namespace CrCms\Microservice\Client\Concerns;
 
-use CrCms\Foundation\MicroService\Client\Service;
+use CrCms\Microservice\Client\Service;
 
 /**
  * Trait ServiceInstanceConcern
- * @package CrCms\Foundation\MicroService\Client\Concerns
+ * @package CrCms\Microservice\Client\Concerns
  */
 trait ServiceInstanceConcern
 {

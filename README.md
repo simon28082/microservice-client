@@ -1,2 +1,2 @@
-# micro-service-client
+# microservice-client
 micro service client

@@ -7,22 +7,38 @@
  * @copyright Copyright &copy; 2018 Rights Reserved CRCMS
  */
 
-namespace CrCms\Foundation\MicroService\Client\Selectors;
+namespace CrCms\Microservice\Client\Selectors;
 
-use CrCms\Foundation\MicroService\Client\Contracts\SelectorContract;
+use CrCms\Microservice\Client\Contracts\SelectorContract;
+use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 
 /**
  * Class RandSelector
- * @package CrCms\Foundation\MicroService\Client\Selectors
+ * @package CrCms\Microservice\Client\Selectors
  */
 class RandSelector implements SelectorContract
 {
     /**
-     * @param array $services
+     * @var ServiceDiscoverContract
+     */
+    protected $discover;
+
+    /**
+     * RandSelector constructor.
+     * @param ServiceDiscoverContract $discover
+     */
+    public function __construct(ServiceDiscoverContract $discover)
+    {
+        $this->discover = $discover;
+    }
+
+    /**
+     * @param string $service
      * @return array
      */
-    public function select(array $services): array
+    public function select(string $service): array
     {
+        $services = $this->discover->services($service);
         return $services[array_rand($services)];
     }
 }

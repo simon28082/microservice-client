@@ -7,13 +7,13 @@
  * @copyright Copyright &copy; 2018 Rights Reserved CRCMS
  */
 
-namespace CrCms\Foundation\MicroService\Client\Selectors;
+namespace CrCms\Microservice\Client\Selectors;
 
-use CrCms\Foundation\MicroService\Client\Contracts\SelectorContract;
+use CrCms\Microservice\Client\Contracts\SelectorContract;
 
 /**
  * Class RingSelector
- * @package CrCms\Foundation\MicroService\Client\Selectors
+ * @package CrCms\Microservice\Client\Selectors
  */
 class RingSelector implements SelectorContract
 {

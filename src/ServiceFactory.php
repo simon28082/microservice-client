@@ -1,9 +1,9 @@
 <?php
 
-namespace CrCms\Foundation\MicroService\Client;
+namespace CrCms\Microservice\Client;
 
-use CrCms\Foundation\MicroService\Client\Contracts\ServiceContract;
-use CrCms\Foundation\MicroService\Client\Drivers\Restful;
+use CrCms\Microservice\Client\Contracts\ClientContract;
+use CrCms\Microservice\Client\Clients\Restful;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 
@@ -29,17 +29,26 @@ class ServiceFactory
 
     /**
      * @param string $driver
-     * @return ServiceContract
+     * @return ClientContract
      */
-    public function make(string $driver): ServiceContract
+    public function make(string $driver): ClientContract
     {
-        $config = $this->app->make('config')->get("micro-service-client.clients.{$driver}");
-
+        $config = $this->app->make('config')->get("microservice-client.clients.{$driver}");
+        $options = $this->serviceConfig();
+        
         switch ($config['name']) {
             case 'restful':
-                return new Restful($this->app->make('client.manager'), $config);
+                return new Restful($this->app->make('client.manager'), $config, $options);
         }
 
         throw new InvalidArgumentException("Unsupported driver [{$config['name']}]");
+    }
+
+    /**
+     * @return array
+     */
+    protected function serviceConfig(): array
+    {
+        return $this->app->make('config')->get("microservice-client.service_options", []);
     }
 }

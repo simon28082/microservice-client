@@ -7,13 +7,13 @@
  * @copyright Copyright &copy; 2018 Rights Reserved CRCMS
  */
 
-namespace CrCms\Foundation\MicroService\Client\Contracts;
+namespace CrCms\Microservice\Client\Contracts;
 
 interface SelectorContract
 {
     /**
-     * @param array $connections
+     * @param string $service
      * @return array
      */
-    public function select(array $connections): array;
+    public function select(string $service): array;
 }

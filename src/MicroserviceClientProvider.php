@@ -7,12 +7,16 @@
  * @copyright Copyright &copy; 2018 Rights Reserved CRCMS
  */
 
-namespace CrCms\Foundation\MicroService\Client;
+namespace CrCms\Microservice\Client;
 
 use CrCms\Foundation\Client\ClientServiceProvider;
-use CrCms\Foundation\MicroService\Client\Contracts\SelectorContract;
-use CrCms\Foundation\MicroService\Client\Selectors\RandSelector;
-use CrCms\Foundation\MicroService\Client\Contracts\ServiceDiscoverContract;
+use CrCms\Microservice\Client\Contracts\SecretContract;
+use CrCms\Microservice\Client\Contracts\SelectorContract;
+use CrCms\Microservice\Client\Packer\Packer;
+use CrCms\Microservice\Client\Packer\Secret;
+use CrCms\Microservice\Client\Selectors\RandSelector;
+use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
+use CrCms\Microservice\Client\Services\Local;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
@@ -21,17 +25,17 @@ use Laravel\Lumen\Application;
  * Class MicroServiceProvider
  * @package CrCms\Foundation\Rpc
  */
-class MicroServiceClientProvider extends ServiceProvider
+class MicroserviceClientProvider extends ServiceProvider
 {
     /**
      * @var bool
      */
-    protected $defer = false;
+    protected $defer = true;
 
     /**
      * @var string
      */
-    protected $namespaceName = 'micro-service-client';
+    protected $namespaceName = 'microservice-client';
 
     /**
      * @var string
@@ -53,9 +57,9 @@ class MicroServiceClientProvider extends ServiceProvider
         }
 
         //event listen
-        foreach ($this->app->make('config')->get('micro-service-client.events', []) as $event) {
-            Event::listen('micro-service.call', $event.'@handle');
-            Event::listen('micro-service.call.failed', $event.'@failed');
+        foreach ($this->app->make('config')->get('microservice-client.events', []) as $event) {
+            Event::listen('microservice.call', $event . '@handle');
+            Event::listen('microservice.call.failed', $event . '@failed');
         }
     }
 
@@ -76,7 +80,7 @@ class MicroServiceClientProvider extends ServiceProvider
         $this->registerServices();
         $this->registerCommands();
 
-        $this->app->register(ClientServiceProvider::class);
+        //$this->app->register(ClientServiceProvider::class);
     }
 
     /**
@@ -88,12 +92,23 @@ class MicroServiceClientProvider extends ServiceProvider
             return new ServiceFactory($app);
         });
 
-        $this->app->singleton('micro-service-client.discovery.selector', function () {
-            return new RandSelector;
+        $this->app->singleton('microservice-client.selector', function ($app) {
+            return new RandSelector($app['microservice-client.discover']);
         });
 
-        $this->app->singleton('micro-service-client.discovery', function ($app) {
-            return new ServiceDiscover($app, $app->make('micro-service-client.discovery.selector'), $app->make('client.manager'));
+        $this->app->singleton('microservice-client.sceret', function ($app) {
+            return new Secret(
+                $app['config']->get('microservice-client.secret'),
+                $app['config']->get('microservice-client.secret_cipher')
+            );
+        });
+
+        $this->app->singleton('microservice-client.packer', function ($app) {
+            return new Packer($app['microservice-client.sceret']);
+        });
+
+        $this->app->singleton('microservice-client.discover', function ($app) {
+            return new Local($app, $app['config']->get('microservice-client.connections.local'));
         });
     }
 
@@ -117,8 +132,10 @@ class MicroServiceClientProvider extends ServiceProvider
      */
     protected function registerAlias(): void
     {
-        $this->app->alias('micro-service-client.discovery', ServiceDiscoverContract::class);
-        $this->app->alias('micro-service-client.discovery.selector', SelectorContract::class);
+        $this->app->alias('microservice-client.discover', ServiceDiscoverContract::class);
+        $this->app->alias('microservice-client.selector', SelectorContract::class);
+        $this->app->alias('microservice-client.sceret', SecretContract::class);
+        $this->app->alias('microservice-client.packer', Packer::class);
     }
 
     /**
@@ -129,6 +146,9 @@ class MicroServiceClientProvider extends ServiceProvider
         return [
             ServiceDiscoverContract::class,
             SelectorContract::class,
+            ServiceFactory::class,
+            SecretContract::class,
+            'microservice-client.packer'
         ];
     }
 }

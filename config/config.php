@@ -8,7 +8,7 @@ return [
     |
     */
 
-    'default' => env('SERVICE_CONNECTION_DRIVER', 'consul'),
+    'connection' => env('SERVICE_CONNECTION', 'consul'),
 
     /*
     |--------------------------------------------------------------------------
@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'client' => env('SERVICE_CLIENT_DRIVER', 'restful'),
+    'client' => env('SERVICE_CLIENT', 'restful'),
 
     /*
     |--------------------------------------------------------------------------
@@ -37,15 +37,30 @@ return [
                 'port' => env('SERVICE_DISCOVER_PORT', 8500),
                 'uri' => 'v1/catalog/service',
             ],
-            'services' => [
-                [
-                    "ServiceID" => "",
-                    "ServiceName" => "",
-                    "ServiceAddress" => "",
-                    "ServicePort" => 80,
-                ], // or  ServiceName
+        ],
+
+        'local' => [
+            'discover' => [
+                'path' => env('SERVICE_DISCOVER_PATH', storage_path('micorservice-discover.json'))
             ],
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Service request options
+    |--------------------------------------------------------------------------
+    |
+    | Additional options for each service initiation request, such as timeout, SSL encryption certificate verification, etc.
+    |
+    */
+
+    'service_options' => [
+        /* example */
+        /*'server' => [
+            'timeout' => 1,
+            'verify' => resource_path('ssl/cacert.pem'),
+        ]*/
     ],
 
     /*
@@ -64,6 +79,7 @@ return [
             'driver' => 'http',
             'options' => [
                 'timeout' => 1,
+                //'verify' => resource_path('ssl/cacert.pem'),
             ],
         ]
     ],
@@ -81,14 +97,30 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Interactive authentication key
+    | Whether to enable microservice data encryption and decryption
     |--------------------------------------------------------------------------
-    |
-    | The hash value used to generate data interaction between services
     |
     */
 
-    'secret' => env('SERVICE_SECRET', null),
+    'secret_status' => env('SERVICE_SECRET_STATUS', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Microservice data encryption and decryption key
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'secret' => env('SERVICE_SECRET', '#1#2@!##'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Microservice data encryption and decryption method
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'secret_cipher' => env('SERVICE_SECRET_CIPHER', 'AES-256-CFB'),
 
     /*
     |--------------------------------------------------------------------------
@@ -99,17 +131,16 @@ return [
     | RandSelector: Randomly select an available selector
     | RingSelector: A ring selector to ensure scheduling equalization
     | ResidentSelector: Always use the same available selector
-    | PopSelector: Swoole coroutines are used, each time an independently generated connection
     */
 
-    'selector' => \CrCms\Foundation\MicroService\Client\Selectors\RandSelector::class,
+    'selector' => \CrCms\Microservice\Client\Selectors\RandSelector::class,
 
     /*
     |--------------------------------------------------------------------------
     | Services call events
     |--------------------------------------------------------------------------
     | The escalation event listener of the service execution result.
-    | Must implement the CrCms\Foundation\MicroService\Client\Contracts\CallEventContract interface
+    | Must implement the CrCms\Microservice\Client\Contracts\CallEventContract interface
     */
 
     'events' => [
