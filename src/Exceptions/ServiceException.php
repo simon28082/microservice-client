@@ -38,7 +38,7 @@ class ServiceException extends RuntimeException
     public function __construct(Exception $exception)
     {
         $this->resolveException($exception);
-        parent::__construct($exception->getMessage(), $exception->getCode());
+        parent::__construct($exception->getMessage(), $exception->getCode(), $exception);
     }
 
     /**
@@ -85,12 +85,7 @@ class ServiceException extends RuntimeException
      */
     protected function resolveMessage(string $message)
     {
-        $data = json_decode($message, true);
-        if (json_last_error() !== 0) {
-            throw new UnexpectedValueException("The raw data error " . json_last_error_msg());
-        }
-
-        return app(Packer::class)->unpack($data['data'], config('microservice-client.secret_status'));
+        return app(Packer::class)->unpack($message);
     }
 
     /**
