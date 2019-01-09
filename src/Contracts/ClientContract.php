@@ -14,10 +14,10 @@ interface ClientContract
     /**
      * @param array $service
      * @param string $uri
-     * @param array $params
+     * @param array|string $params
      * @return ClientContract
      */
-    public function call(array $service, array $params = []): ClientContract;
+    public function call(array $service, $params = []): ClientContract;
 
     /**
      * @return int

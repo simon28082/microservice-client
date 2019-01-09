@@ -2,38 +2,45 @@
 
 namespace CrCms\Microservice\Client\Packer;
 
-use CrCms\Microservice\Client\Contracts\SecretContract;
+use Illuminate\Contracts\Encryption\Encrypter;
 use UnexpectedValueException;
 
 /**
  * Class Packer
- * @package CrCms\Microservice\Client\Packer
+ * @package CrCms\Microservice\Server\Packer
  */
 class Packer
 {
     /**
-     * @var SecretContract
+     * @var Encrypter
      */
     protected $secret;
 
     /**
-     * Packer constructor.
-     * @param SecretContract $secret
+     * @var Encrypter
      */
-    public function __construct(SecretContract $secret)
+    protected $isSecret;
+
+    /**
+     * Packer constructor.
+     * @param Encrypter $secret
+     * @param bool $isSecret
+     */
+    public function __construct(Encrypter $secret, bool $isSecret = true)
     {
         $this->secret = $secret;
+        $this->isSecret = $isSecret;
     }
 
     /**
      * @param array $data
-     * @param bool $encryption
      * @return string
      */
-    public function pack(array $data, $encryption = true): string
+    public function pack(array $data): string
     {
-        $data = $encryption ? ['data' => $this->secret->encrypt($data), 'iv' => $this->secret->getIv()] : $data;
-        return base64_encode(json_encode($data));
+        return $this->isSecret ?
+            $this->secret->encrypt($data) :
+            base64_encode(json_encode($data));
     }
 
     /**
@@ -41,15 +48,17 @@ class Packer
      * @param bool $encryption
      * @return array
      */
-    public function unpack(string $data, $encryption = true): array
+    public function unpack(string $data): array
     {
+        if ($this->isSecret) {
+            return $this->secret->decrypt($data);
+        }
+
         $data = json_decode(base64_decode($data), true);
         if (json_last_error() !== 0) {
             throw new UnexpectedValueException("Parse data error: " . json_last_error_msg());
         }
 
-        return $encryption ?
-            $this->secret->decrypt($data['data'], $data['iv']) :
-            $data;
+        return $data;
     }
 }

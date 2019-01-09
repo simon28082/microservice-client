@@ -17,8 +17,6 @@ class Restful implements ClientContract
      */
     protected $headers = [
         'User-Agent' => 'CRCMS-Microservice PHP Client',
-        'Content-Type' => 'application/json',
-        'Accept' => 'application/json',
         'Accept-Encoding' => 'gzip,deflate,br',
         'Connection' => 'keep-alive',
     ];
@@ -76,10 +74,10 @@ class Restful implements ClientContract
     /**
      * @param array $service
      * @param string $uri
-     * @param array $params
+     * @param array|string $params
      * @return Restful
      */
-    public function call(array $service, array $params = []): ClientContract
+    public function call(array $service, $params = []): ClientContract
     {
         $this->client->connection([
             'name' => $service['name'],

@@ -102,25 +102,7 @@ return [
     |
     */
 
-    'secret_status' => env('SERVICE_SECRET_STATUS', true),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Microservice data encryption and decryption key
-    |--------------------------------------------------------------------------
-    |
-    */
-
-    'secret' => env('SERVICE_SECRET', '#1#2@!##'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Microservice data encryption and decryption method
-    |--------------------------------------------------------------------------
-    |
-    */
-
-    'secret_cipher' => env('SERVICE_SECRET_CIPHER', 'AES-256-CFB'),
+    'encryption' => env('SERVICE_ENCRYPTION', env('APP_ENCRYPTION', true)),
 
     /*
     |--------------------------------------------------------------------------
