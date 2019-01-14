@@ -82,6 +82,7 @@ class Swarm implements ServiceDiscoverContract
     protected function net(): array
     {
         $this->client->connection([
+            //'name' => 'connection_swarm',//must
             'driver' => 'http',
             'host' => $this->config['connections']['swarm']['discover']['host'],
             'port' => $this->config['connections']['swarm']['discover']['port'],
@@ -89,6 +90,8 @@ class Swarm implements ServiceDiscoverContract
 
         try {
             $content = $this->client->handle('services', ['method' => 'get'])->getContent();
+        } catch (\Exception $e) {
+            throw $e;
         } finally {
             $this->client->disconnection();
         }
@@ -132,7 +135,7 @@ class Swarm implements ServiceDiscoverContract
                 'id' => $service['ID'],
                 'name' => str_replace($service['Spec']['Labels']['com.docker.stack.namespace'] . '_', '', $service['Spec']['Name']),
                 'host' => str_replace($service['Spec']['Labels']['com.docker.stack.namespace'] . '_', '', $service['Spec']['Name']),
-                $this->config['default_port'] ?? 28080,
+                'port' => $this->config['default_port'] ?? 28080,
             ];
         })->groupBy('name')->toArray();
     }
