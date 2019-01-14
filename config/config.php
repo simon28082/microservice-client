@@ -35,7 +35,7 @@ return [
                 'driver' => 'http',
                 'host' => env('SERVICE_DISCOVER_HOST', '127.0.0.1'),
                 'port' => env('SERVICE_DISCOVER_PORT', 8500),
-                'uri' => 'v1/catalog/service',
+                'uri' => 'agent/services',
             ],
         ],
 

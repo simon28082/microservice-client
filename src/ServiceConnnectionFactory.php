@@ -4,6 +4,7 @@ namespace CrCms\Microservice\Client;
 
 use CrCms\Microservice\Client\Contracts\ClientContract;
 use CrCms\Microservice\Client\Clients\Restful;
+use CrCms\Microservice\Client\Services\Consul;
 use CrCms\Microservice\Client\Services\Local;
 use CrCms\Microservice\Client\Services\Swarm;
 use Illuminate\Contracts\Container\Container;
@@ -43,8 +44,11 @@ class ServiceConnnectionFactory
             case 'swarm':
                 return new Swarm($this->app, $connections,
                     $this->app['client.manager'],
-                    $this->app['cache']);
-                break;
+                    $this->app['cache']->store());
+            case 'consul':
+                return new Consul($this->app, $connections,
+                    $this->app['client.manager'],
+                    $this->app['cache']->store());
         }
 
         throw new InvalidArgumentException("Unsupported driver [{$config['name']}]");
