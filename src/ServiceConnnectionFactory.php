@@ -44,11 +44,11 @@ class ServiceConnnectionFactory
             case 'swarm':
                 return new Swarm($this->app, $connections,
                     $this->app['client.manager'],
-                    $this->app['cache']);
+                    $this->app['cache']->store());
             case 'consul':
                 return new Consul($this->app, $connections,
                     $this->app['client.manager'],
-                    $this->app['cache']);
+                    $this->app['cache']->store());
         }
 
         throw new InvalidArgumentException("Unsupported driver [{$config['name']}]");
