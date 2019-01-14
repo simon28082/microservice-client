@@ -85,7 +85,9 @@ class Consul implements ServiceDiscoverContract
         ], false);
 
         try {
-            $content = $this->client->handle($this->config['connections']['consul']['discover']['uri'] , ['method' => 'get'])->getContent();
+            $content = $this->client->handle($this->config['connections']['consul']['discover']['uri'], ['method' => 'get'])->getContent();
+        } catch (\Exception $e) {
+            throw $e;
         } finally {
             $this->client->disconnection();
         }
