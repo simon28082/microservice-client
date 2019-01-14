@@ -32,9 +32,9 @@ class ServiceConnnectionFactory
 
     /**
      * @param string $driver
-     * @return ClientContract
+     * @return ServiceDiscoverContract
      */
-    public function make(string $driver): ClientContract
+    public function make(string $driver): ServiceDiscoverContract
     {
         $connections = $this->allConnections();
 
@@ -59,6 +59,6 @@ class ServiceConnnectionFactory
      */
     protected function allConnections(): array
     {
-        return $this->app->make('config')->get('microservice-client.connections');
+        return $this->app->make('config')->get('microservice-client');
     }
 }
