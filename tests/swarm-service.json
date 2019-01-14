@@ -1,0 +1,321 @@
+[
+  {
+    "ID": "clz88kmcux5y6u86lyxyw9nd1",
+    "Version": {
+      "Index": 1232
+    },
+    "CreatedAt": "2019-01-14T01:45:03.293794784Z",
+    "UpdatedAt": "2019-01-14T01:45:03.299257983Z",
+    "Spec": {
+      "Name": "crcms-microservice_workspace",
+      "Labels": {
+        "com.docker.stack.image": "hellocr/microservice:workspace-latest",
+        "com.docker.stack.namespace": "crcms-microservice"
+      },
+      "TaskTemplate": {
+        "ContainerSpec": {
+          "Image": "hellocr/microservice:workspace-latest@sha256:d799921319a1c7f762b860e373dc2086f3462d833be848d2559835bc2f5a7081",
+          "Labels": {
+            "com.docker.stack.namespace": "crcms-microservice"
+          },
+          "Env": [
+            "APP_RUN_GROUP=test",
+            "APP_RUN_NAME=test",
+            "APP_RUN_PGID=1001",
+            "APP_RUN_PUID=1001"
+          ],
+          "Privileges": {
+            "CredentialSpec": null,
+            "SELinuxContext": null
+          },
+          "TTY": true,
+          "Mounts": [
+            {
+              "Type": "bind",
+              "Source": "/home/simon/code/docker/test",
+              "Target": "/var/www"
+            },
+            {
+              "Type": "bind",
+              "Source": "/home/simon/code/docker/docker/workspace/production",
+              "Target": "/config"
+            }
+          ],
+          "Isolation": "default"
+        },
+        "Resources": {},
+        "Placement": {
+          "Platforms": [
+            {
+              "Architecture": "amd64",
+              "OS": "linux"
+            }
+          ]
+        },
+        "Networks": [
+          {
+            "Target": "qebn74ofi23igw39t7dci3app",
+            "Aliases": [
+              "workspace"
+            ]
+          }
+        ],
+        "ForceUpdate": 0,
+        "Runtime": "container"
+      },
+      "Mode": {
+        "Replicated": {
+          "Replicas": 2
+        }
+      },
+      "EndpointSpec": {
+        "Mode": "vip"
+      }
+    },
+    "Endpoint": {
+      "Spec": {
+        "Mode": "vip"
+      },
+      "VirtualIPs": [
+        {
+          "NetworkID": "qebn74ofi23igw39t7dci3app",
+          "Addr": "10.0.3.9/24"
+        }
+      ]
+    }
+  },
+  {
+    "ID": "nwh64v0lsjk5wmm6e3vsbtqsg",
+    "Version": {
+      "Index": 1218
+    },
+    "CreatedAt": "2019-01-14T01:45:00.082179883Z",
+    "UpdatedAt": "2019-01-14T01:45:00.084269496Z",
+    "Spec": {
+      "Name": "crcms-microservice_nginx",
+      "Labels": {
+        "com.docker.stack.image": "hellocr/microservice:nginx-latest",
+        "com.docker.stack.namespace": "crcms-microservice"
+      },
+      "TaskTemplate": {
+        "ContainerSpec": {
+          "Image": "hellocr/microservice:nginx-latest@sha256:f744ebd3ca7fa9729ba48956332b445b86f646938dbde6b3a38872b73cc2fe64",
+          "Labels": {
+            "com.docker.stack.namespace": "crcms-microservice"
+          },
+          "Env": [
+            "APP_RUN_GROUP=test",
+            "APP_RUN_NAME=test",
+            "APP_RUN_PGID=1001",
+            "APP_RUN_PUID=1001"
+          ],
+          "Privileges": {
+            "CredentialSpec": null,
+            "SELinuxContext": null
+          },
+          "Mounts": [
+            {
+              "Type": "bind",
+              "Source": "/home/simon/code/docker/test",
+              "Target": "/var/www"
+            },
+            {
+              "Type": "bind",
+              "Source": "/home/simon/code/docker/docker/nginx/production",
+              "Target": "/config"
+            }
+          ],
+          "Isolation": "default"
+        },
+        "Resources": {},
+        "Placement": {
+          "Platforms": [
+            {
+              "Architecture": "amd64",
+              "OS": "linux"
+            }
+          ]
+        },
+        "Networks": [
+          {
+            "Target": "qebn74ofi23igw39t7dci3app",
+            "Aliases": [
+              "nginx"
+            ]
+          },
+          {
+            "Target": "blcsmmsyc3luvr1ljpe3agp3p",
+            "Aliases": [
+              "nginx"
+            ]
+          }
+        ],
+        "ForceUpdate": 0,
+        "Runtime": "container"
+      },
+      "Mode": {
+        "Replicated": {
+          "Replicas": 2
+        }
+      },
+      "EndpointSpec": {
+        "Mode": "vip",
+        "Ports": [
+          {
+            "Protocol": "tcp",
+            "TargetPort": 80,
+            "PublishedPort": 80,
+            "PublishMode": "ingress"
+          },
+          {
+            "Protocol": "tcp",
+            "TargetPort": 443,
+            "PublishedPort": 443,
+            "PublishMode": "ingress"
+          }
+        ]
+      }
+    },
+    "Endpoint": {
+      "Spec": {
+        "Mode": "vip",
+        "Ports": [
+          {
+            "Protocol": "tcp",
+            "TargetPort": 80,
+            "PublishedPort": 80,
+            "PublishMode": "ingress"
+          },
+          {
+            "Protocol": "tcp",
+            "TargetPort": 443,
+            "PublishedPort": 443,
+            "PublishMode": "ingress"
+          }
+        ]
+      },
+      "Ports": [
+        {
+          "Protocol": "tcp",
+          "TargetPort": 80,
+          "PublishedPort": 80,
+          "PublishMode": "ingress"
+        },
+        {
+          "Protocol": "tcp",
+          "TargetPort": 443,
+          "PublishedPort": 443,
+          "PublishMode": "ingress"
+        }
+      ],
+      "VirtualIPs": [
+        {
+          "NetworkID": "gc4u37by46bmyt65n0a0v8j2x",
+          "Addr": "10.255.0.6/16"
+        },
+        {
+          "NetworkID": "qebn74ofi23igw39t7dci3app",
+          "Addr": "10.0.3.2/24"
+        },
+        {
+          "NetworkID": "blcsmmsyc3luvr1ljpe3agp3p",
+          "Addr": "10.0.2.2/24"
+        }
+      ]
+    }
+  },
+  {
+    "ID": "oby3plqdtpnkk3afge3axbo7g",
+    "Version": {
+      "Index": 1226
+    },
+    "CreatedAt": "2019-01-14T01:45:01.51995319Z",
+    "UpdatedAt": "2019-01-14T01:45:01.524652484Z",
+    "Spec": {
+      "Name": "crcms-microservice_php-fpm",
+      "Labels": {
+        "com.docker.stack.image": "hellocr/microservice:php-fpm-latest",
+        "com.docker.stack.namespace": "crcms-microservice"
+      },
+      "TaskTemplate": {
+        "ContainerSpec": {
+          "Image": "hellocr/microservice:php-fpm-latest@sha256:ef34c6a9c0b378705fed2796e67e946815203ef9af80662bb3e74c0e3870a440",
+          "Labels": {
+            "com.docker.stack.namespace": "crcms-microservice"
+          },
+          "Env": [
+            "APP_RUN_GROUP=test",
+            "APP_RUN_NAME=test",
+            "APP_RUN_PGID=1001",
+            "APP_RUN_PUID=1001"
+          ],
+          "Privileges": {
+            "CredentialSpec": null,
+            "SELinuxContext": null
+          },
+          "Mounts": [
+            {
+              "Type": "bind",
+              "Source": "/home/simon/code/docker/test",
+              "Target": "/var/www"
+            },
+            {
+              "Type": "bind",
+              "Source": "/home/simon/code/docker/docker/php-fpm/production",
+              "Target": "/config"
+            }
+          ],
+          "Isolation": "default"
+        },
+        "Resources": {},
+        "Placement": {
+          "Platforms": [
+            {
+              "Architecture": "amd64",
+              "OS": "linux"
+            }
+          ]
+        },
+        "Networks": [
+          {
+            "Target": "qebn74ofi23igw39t7dci3app",
+            "Aliases": [
+              "php-fpm"
+            ]
+          },
+          {
+            "Target": "blcsmmsyc3luvr1ljpe3agp3p",
+            "Aliases": [
+              "php-fpm"
+            ]
+          }
+        ],
+        "ForceUpdate": 0,
+        "Runtime": "container"
+      },
+      "Mode": {
+        "Replicated": {
+          "Replicas": 2
+        }
+      },
+      "EndpointSpec": {
+        "Mode": "vip"
+      }
+    },
+    "Endpoint": {
+      "Spec": {
+        "Mode": "vip"
+      },
+      "VirtualIPs": [
+        {
+          "NetworkID": "qebn74ofi23igw39t7dci3app",
+          "Addr": "10.0.3.6/24"
+        },
+        {
+          "NetworkID": "blcsmmsyc3luvr1ljpe3agp3p",
+          "Addr": "10.0.2.6/24"
+        }
+      ]
+    }
+  }
+]

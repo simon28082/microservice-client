@@ -16,6 +16,7 @@ use CrCms\Microservice\Client\Packer\Packer;
 use CrCms\Microservice\Client\Selectors\RandSelector;
 use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use CrCms\Microservice\Client\Services\Local;
+use CrCms\Microservice\Client\Services\Swarm;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
@@ -100,7 +101,10 @@ class MicroserviceClientProvider extends ServiceProvider
         });
 
         $this->app->singleton('microservice-client.discover', function ($app) {
-            return new Local($app, $app['config']->get('microservice-client.connections.local'));
+            $factory = new ServiceConnnectionFactory($app);
+            return $factory->make(
+                $app['config']->get('microservice-client.connection')
+            );
         });
     }
 

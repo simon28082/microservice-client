@@ -11,9 +11,16 @@
   "license": "MIT",
   "require": {
     "php": ">=7.1",
+    "illuminate/container": "^5.5",
     "illuminate/events": "^5.5",
     "illuminate/encryption": "^5.5",
+    "illuminate/cache": "^5.5",
+    "illuminate/support": "^5.5",
     "crcms/client": "dev-master"
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.0",
+    "phpunit/phpunit": "^7.0"
   },
   "autoload": {
     "files": [
@@ -23,6 +30,9 @@
     }
   },
   "autoload-dev": {
+    "files": [
+      "tests/bootstrap.php"
+    ],
     "psr-4": {
       "CrCms\\Microservice\\Client\\Tests\\": "tests/"
     }
@@ -34,6 +44,14 @@
       ],
       "aliases": {
       }
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "repositories": {
+    "packagist": {
+      "type": "composer",
+      "url": "https://packagist.laravel-china.org"
     }
   }
 }
