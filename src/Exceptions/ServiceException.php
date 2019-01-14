@@ -37,6 +37,7 @@ class ServiceException extends RuntimeException
      */
     public function __construct(Exception $exception)
     {
+        $this->exception = $exception;
         $this->resolveException($exception);
         parent::__construct($exception->getMessage(), $exception->getCode(), $exception);
     }
@@ -101,7 +102,7 @@ class ServiceException extends RuntimeException
                 $statusCode
             );
         } else {
-            throw new Exception($this->exceptionMessage, $statusCode);
+            throw $this->exception;
         }
     }
 }
