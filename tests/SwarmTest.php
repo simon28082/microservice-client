@@ -23,7 +23,6 @@ class SwarmTest extends TestCase
 
     public function testServices()
     {
-        $config = require __DIR__.'/../config/config.php';
         $app = \Mockery::mock('Illuminate\Contracts\Container\Container');
 
         $client = \Mockery::mock('CrCms\Foundation\Client\ClientManager');
@@ -36,7 +35,7 @@ class SwarmTest extends TestCase
         );
         $client->shouldReceive('disconnection');
         $swarm = new Swarm(
-            $app,$config,$client,
+            $app,global_config(),$client,
             new Repository(new NullStore())
         );
         $fpm = $swarm->services('php-fpm');
