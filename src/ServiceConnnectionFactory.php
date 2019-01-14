@@ -4,6 +4,7 @@ namespace CrCms\Microservice\Client;
 
 use CrCms\Microservice\Client\Contracts\ClientContract;
 use CrCms\Microservice\Client\Clients\Restful;
+use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use CrCms\Microservice\Client\Services\Consul;
 use CrCms\Microservice\Client\Services\Local;
 use CrCms\Microservice\Client\Services\Swarm;
@@ -51,7 +52,7 @@ class ServiceConnnectionFactory
                     $this->app['cache']->store());
         }
 
-        throw new InvalidArgumentException("Unsupported driver [{$config['name']}]");
+        throw new InvalidArgumentException("Unsupported driver [{$driver}]");
     }
 
     /**
