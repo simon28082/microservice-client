@@ -65,7 +65,7 @@ class Local implements ServiceDiscoverContract
      */
     protected function readServices(): array
     {
-        $path = $this->config['discover']['path'];
+        $path = $this->config['connections']['local']['discover']['path'];
         if (!file_exists($path)) {
             throw new InvalidArgumentException("The file[{$path}] not found");
         }

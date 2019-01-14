@@ -8,7 +8,7 @@ return [
     |
     */
 
-    'connection' => env('SERVICE_CONNECTION', 'consul'),
+    'connection' => env('SERVICE_CONNECTION', 'swarm'),
 
     /*
     |--------------------------------------------------------------------------
@@ -33,7 +33,7 @@ return [
         'consul' => [
             'discover' => [
                 'driver' => 'http',
-                'host' => env('SERVICE_DISCOVER_HOST', null),
+                'host' => env('SERVICE_DISCOVER_HOST', '127.0.0.1'),
                 'port' => env('SERVICE_DISCOVER_PORT', 8500),
                 'uri' => 'v1/catalog/service',
             ],
@@ -44,7 +44,24 @@ return [
                 'path' => env('SERVICE_DISCOVER_PATH', storage_path('micorservice-discover.json'))
             ],
         ],
+
+        'swarm' => [
+            'discover' => [
+                'driver' => 'http',
+                'host' => env('SERVICE_DISCOVER_HOST', '127.0.0.1'),
+                'port' => env('SERVICE_DISCOVER_PORT', 2375),
+            ],
+        ]
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Service default port
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'default_port' => env('SERVICE_DEFAULT_PORT', 28080),
 
     /*
     |--------------------------------------------------------------------------
