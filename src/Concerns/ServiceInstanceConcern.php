@@ -5,8 +5,7 @@ namespace CrCms\Microservice\Client\Concerns;
 use CrCms\Microservice\Client\Service;
 
 /**
- * Trait ServiceInstanceConcern
- * @package CrCms\Microservice\Client\Concerns
+ * Trait ServiceInstanceConcern.
  */
 trait ServiceInstanceConcern
 {

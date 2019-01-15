@@ -6,8 +6,7 @@ use Illuminate\Contracts\Encryption\Encrypter;
 use UnexpectedValueException;
 
 /**
- * Class Packer
- * @package CrCms\Microservice\Server\Packer
+ * Class Packer.
  */
 class Packer
 {
@@ -23,8 +22,9 @@ class Packer
 
     /**
      * Packer constructor.
+     *
      * @param Encrypter $secret
-     * @param bool $isSecret
+     * @param bool      $isSecret
      */
     public function __construct(Encrypter $secret, bool $isSecret = true)
     {
@@ -34,6 +34,7 @@ class Packer
 
     /**
      * @param array $data
+     *
      * @return string
      */
     public function pack(array $data): string
@@ -45,7 +46,8 @@ class Packer
 
     /**
      * @param string $data
-     * @param bool $encryption
+     * @param bool   $encryption
+     *
      * @return array
      */
     public function unpack(string $data): array
@@ -56,7 +58,7 @@ class Packer
 
         $data = json_decode(base64_decode($data), true);
         if (json_last_error() !== 0) {
-            throw new UnexpectedValueException("Parse data error: " . json_last_error_msg());
+            throw new UnexpectedValueException('Parse data error: '.json_last_error_msg());
         }
 
         return $data;

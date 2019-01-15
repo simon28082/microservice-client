@@ -2,9 +2,9 @@
 
 namespace CrCms\Microservice\Client\Facades;
 
-use Illuminate\Support\Facades\Facade;
 use CrCms\Microservice\Client\Service as ServiceInstance;
 use GuzzleHttp\Promise\Promise;
+use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static object call(string $service, $uri = '', array $params = [])
@@ -16,7 +16,6 @@ use GuzzleHttp\Promise\Promise;
  * @method static ServiceInstance connection(?string $name = null)
  *
  * Class Service
- * @package CrCms\Microservice\Client\Facades
  */
 class Service extends Facade
 {

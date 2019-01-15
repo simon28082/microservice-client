@@ -2,14 +2,13 @@
 
 namespace CrCms\Microservice\Client;
 
-use CrCms\Microservice\Client\Contracts\ClientContract;
 use CrCms\Microservice\Client\Clients\Restful;
+use CrCms\Microservice\Client\Contracts\ClientContract;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 
 /**
- * Class ServiceFactory
- * @package CrCms\Foundation\Rpc\Client
+ * Class ServiceFactory.
  */
 class ServiceFactory
 {
@@ -20,6 +19,7 @@ class ServiceFactory
 
     /**
      * ServiceFactory constructor.
+     *
      * @param Container $container
      */
     public function __construct(Container $container)
@@ -29,13 +29,14 @@ class ServiceFactory
 
     /**
      * @param string $driver
+     *
      * @return ClientContract
      */
     public function make(string $driver): ClientContract
     {
         $config = $this->app->make('config')->get("microservice-client.clients.{$driver}");
         $options = $this->serviceConfig();
-        
+
         switch ($config['name']) {
             case 'restful':
                 return new Restful($this->app->make('client.manager'), $config, $options);
@@ -49,6 +50,6 @@ class ServiceFactory
      */
     protected function serviceConfig(): array
     {
-        return $this->app->make('config')->get("microservice-client.service_options", []);
+        return $this->app->make('config')->get('microservice-client.service_options', []);
     }
 }

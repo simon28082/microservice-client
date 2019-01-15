@@ -7,8 +7,7 @@ use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Container\Container;
 
 /**
- * Class Consul
- * @package Micr
+ * Class Consul.
  */
 class Consul implements ServiceDiscoverContract
 {
@@ -44,8 +43,9 @@ class Consul implements ServiceDiscoverContract
 
     /**
      * Local constructor.
+     *
      * @param Container $app
-     * @param array $config
+     * @param array     $config
      */
     public function __construct(Container $app, array $config, ClientManager $clientManager, Repository $cache)
     {
@@ -58,6 +58,7 @@ class Consul implements ServiceDiscoverContract
 
     /**
      * @param string $service
+     *
      * @return array
      */
     public function services(string $service): array
@@ -80,8 +81,8 @@ class Consul implements ServiceDiscoverContract
     {
         $this->client->connection([
             'driver' => 'http',
-            'host' => $this->config['connections']['consul']['discover']['host'],
-            'port' => $this->config['connections']['consul']['discover']['port'],
+            'host'   => $this->config['connections']['consul']['discover']['host'],
+            'port'   => $this->config['connections']['consul']['discover']['port'],
         ], false);
 
         try {
@@ -94,7 +95,7 @@ class Consul implements ServiceDiscoverContract
 
         $content = json_decode($content, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new UnexpectedValueException("JSON parse error");
+            throw new UnexpectedValueException('JSON parse error');
         }
 
         return $content;
@@ -122,13 +123,14 @@ class Consul implements ServiceDiscoverContract
 
     /**
      * @param array $services
+     *
      * @return array
      */
     protected function format(array $services): array
     {
         return Collection::make($services)->map(function (array $service) {
             return [
-                'id' => $service['ID'],
+                'id'   => $service['ID'],
                 'name' => $service['Service'],
                 'host' => $service['Address'],
                 'port' => $service['Port'],

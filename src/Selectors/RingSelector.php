@@ -3,7 +3,9 @@
 /**
  * @author simon <crcms@crcms.cn>
  * @datetime 2018/7/1 21:35
+ *
  * @link http://crcms.cn/
+ *
  * @copyright Copyright &copy; 2018 Rights Reserved CRCMS
  */
 
@@ -12,8 +14,7 @@ namespace CrCms\Microservice\Client\Selectors;
 use CrCms\Microservice\Client\Contracts\SelectorContract;
 
 /**
- * Class RingSelector
- * @package CrCms\Microservice\Client\Selectors
+ * Class RingSelector.
  */
 class RingSelector implements SelectorContract
 {
@@ -24,6 +25,7 @@ class RingSelector implements SelectorContract
 
     /**
      * @param array $connections
+     *
      * @return array
      */
     public function select(array $connections): array

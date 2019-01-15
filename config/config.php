@@ -33,25 +33,25 @@ return [
         'consul' => [
             'discover' => [
                 'driver' => 'http',
-                'host' => env('SERVICE_DISCOVER_HOST', '127.0.0.1'),
-                'port' => env('SERVICE_DISCOVER_PORT', 8500),
-                'uri' => 'agent/services',
+                'host'   => env('SERVICE_DISCOVER_HOST', '127.0.0.1'),
+                'port'   => env('SERVICE_DISCOVER_PORT', 8500),
+                'uri'    => 'agent/services',
             ],
         ],
 
         'local' => [
             'discover' => [
-                'path' => env('SERVICE_DISCOVER_PATH', storage_path('micorservice-discover.json'))
+                'path' => env('SERVICE_DISCOVER_PATH', storage_path('micorservice-discover.json')),
             ],
         ],
 
         'swarm' => [
             'discover' => [
                 'driver' => 'http',
-                'host' => env('SERVICE_DISCOVER_HOST', '127.0.0.1'),
-                'port' => env('SERVICE_DISCOVER_PORT', 2375),
+                'host'   => env('SERVICE_DISCOVER_HOST', '127.0.0.1'),
+                'port'   => env('SERVICE_DISCOVER_PORT', 2375),
             ],
-        ]
+        ],
     ],
 
     /*
@@ -92,13 +92,13 @@ return [
 
     'clients' => [
         'restful' => [
-            'name' => 'restful',
-            'driver' => 'http',
+            'name'    => 'restful',
+            'driver'  => 'http',
             'options' => [
                 'timeout' => 1,
                 //'verify' => resource_path('ssl/cacert.pem'),
             ],
-        ]
+        ],
     ],
 
     /*
@@ -144,5 +144,5 @@ return [
 
     'events' => [
 
-    ]
+    ],
 ];

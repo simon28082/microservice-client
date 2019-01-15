@@ -3,27 +3,25 @@
 /**
  * @author simon <crcms@crcms.cn>
  * @datetime 2018/07/02 19:15
+ *
  * @link http://crcms.cn/
+ *
  * @copyright Copyright &copy; 2018 Rights Reserved CRCMS
  */
 
 namespace CrCms\Microservice\Client;
 
 use CrCms\Foundation\Client\ClientServiceProvider;
-use CrCms\Microservice\Client\Contracts\SecretContract;
 use CrCms\Microservice\Client\Contracts\SelectorContract;
+use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use CrCms\Microservice\Client\Packer\Packer;
 use CrCms\Microservice\Client\Selectors\RandSelector;
-use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
-use CrCms\Microservice\Client\Services\Local;
-use CrCms\Microservice\Client\Services\Swarm;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
 
 /**
- * Class MicroServiceProvider
- * @package CrCms\Foundation\Rpc
+ * Class MicroServiceProvider.
  */
 class MicroserviceClientProvider extends ServiceProvider
 {
@@ -40,7 +38,7 @@ class MicroserviceClientProvider extends ServiceProvider
     /**
      * @var string
      */
-    protected $packagePath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+    protected $packagePath = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
 
     /**
      * @return void
@@ -49,17 +47,16 @@ class MicroserviceClientProvider extends ServiceProvider
     {
         //move config path
         if ($this->isLumen()) {
-
         } else {
             $this->publishes([
-                $this->packagePath . 'config/config.php' => config_path($this->namespaceName . ".php"),
+                $this->packagePath.'config/config.php' => config_path($this->namespaceName.'.php'),
             ]);
         }
 
         //event listen
         foreach ($this->app->make('config')->get('microservice-client.events', []) as $event) {
-            Event::listen('microservice.call', $event . '@handle');
-            Event::listen('microservice.call.failed', $event . '@failed');
+            Event::listen('microservice.call', $event.'@handle');
+            Event::listen('microservice.call.failed', $event.'@failed');
         }
     }
 
@@ -73,8 +70,10 @@ class MicroserviceClientProvider extends ServiceProvider
         }
 
         //merge config
-        $configFile = $this->packagePath . "config/config.php";
-        if (file_exists($configFile)) $this->mergeConfigFrom($configFile, $this->namespaceName);
+        $configFile = $this->packagePath.'config/config.php';
+        if (file_exists($configFile)) {
+            $this->mergeConfigFrom($configFile, $this->namespaceName);
+        }
 
         $this->registerAlias();
         $this->registerServices();
@@ -102,6 +101,7 @@ class MicroserviceClientProvider extends ServiceProvider
 
         $this->app->singleton('microservice-client.discover', function ($app) {
             $factory = new ServiceConnnectionFactory($app);
+
             return $factory->make(
                 $app['config']->get('microservice-client.connection')
             );
