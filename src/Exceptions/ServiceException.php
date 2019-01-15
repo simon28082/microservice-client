@@ -5,14 +5,12 @@ namespace CrCms\Microservice\Client\Exceptions;
 use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
 use CrCms\Foundation\ConnectionPool\Exceptions\RequestException;
 use CrCms\Microservice\Client\Packer\Packer;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
-use Exception;
-use UnexpectedValueException;
 
 /**
- * Class ServiceException
- * @package CrCms\Microservice\Client\Exceptions
+ * Class ServiceException.
  */
 class ServiceException extends RuntimeException
 {
@@ -33,6 +31,7 @@ class ServiceException extends RuntimeException
 
     /**
      * ServiceException constructor.
+     *
      * @param Exception $exception
      */
     public function __construct(Exception $exception)
@@ -82,6 +81,7 @@ class ServiceException extends RuntimeException
 
     /**
      * @param string $message
+     *
      * @return array
      */
     protected function resolveMessage(string $message)
@@ -90,8 +90,9 @@ class ServiceException extends RuntimeException
     }
 
     /**
-     * @return JsonResponse
      * @throws Exception
+     *
+     * @return JsonResponse
      */
     public function render()
     {

@@ -6,12 +6,11 @@ use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
-use UnexpectedValueException;
 use OutOfBoundsException;
+use UnexpectedValueException;
 
 /**
- * Class Local
- * @package CrCms\Microservice\Client\Services
+ * Class Local.
  */
 class Local implements ServiceDiscoverContract
 {
@@ -32,8 +31,9 @@ class Local implements ServiceDiscoverContract
 
     /**
      * Local constructor.
+     *
      * @param Container $app
-     * @param array $config
+     * @param array     $config
      */
     public function __construct(Container $app, array $config)
     {
@@ -43,6 +43,7 @@ class Local implements ServiceDiscoverContract
 
     /**
      * @param string $service
+     *
      * @return array
      */
     public function services(string $service): array
@@ -73,7 +74,7 @@ class Local implements ServiceDiscoverContract
         $content = file_get_contents($path);
         $services = json_decode($content, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new UnexpectedValueException("The services resolve error");
+            throw new UnexpectedValueException('The services resolve error');
         }
 
         return Collection::make($services)->map(function (array $service, int $key) {
@@ -89,4 +90,3 @@ class Local implements ServiceDiscoverContract
         })->groupBy('name')->toArray();
     }
 }
-

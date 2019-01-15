@@ -2,8 +2,6 @@
 
 namespace CrCms\Microservice\Client;
 
-use CrCms\Microservice\Client\Contracts\ClientContract;
-use CrCms\Microservice\Client\Clients\Restful;
 use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use CrCms\Microservice\Client\Services\Consul;
 use CrCms\Microservice\Client\Services\Local;
@@ -12,8 +10,7 @@ use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 
 /**
- * Class ServiceConnnectionFactory
- * @package CrCms\Foundation\Rpc\Client
+ * Class ServiceConnnectionFactory.
  */
 class ServiceConnnectionFactory
 {
@@ -24,6 +21,7 @@ class ServiceConnnectionFactory
 
     /**
      * ServiceFactory constructor.
+     *
      * @param Container $container
      */
     public function __construct(Container $container)
@@ -33,6 +31,7 @@ class ServiceConnnectionFactory
 
     /**
      * @param string $driver
+     *
      * @return ServiceDiscoverContract
      */
     public function make(string $driver): ServiceDiscoverContract

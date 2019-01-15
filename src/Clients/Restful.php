@@ -4,11 +4,9 @@ namespace CrCms\Microservice\Client\Clients;
 
 use CrCms\Foundation\Client\ClientManager;
 use CrCms\Microservice\Client\Contracts\ClientContract;
-use Psr\Http\Message\ResponseInterface;
 
 /**
- * Class Restful
- * @package CrCms\Microservice\Client\Drivers
+ * Class Restful.
  */
 class Restful implements ClientContract
 {
@@ -16,9 +14,9 @@ class Restful implements ClientContract
      * @var array
      */
     protected $headers = [
-        'User-Agent' => 'CRCMS-Microservice PHP Client',
+        'User-Agent'      => 'CRCMS-Microservice PHP Client',
         'Accept-Encoding' => 'gzip,deflate,br',
-        'Connection' => 'keep-alive',
+        'Connection'      => 'keep-alive',
     ];
 
     /**
@@ -60,9 +58,10 @@ class Restful implements ClientContract
 
     /**
      * Restful constructor.
+     *
      * @param ClientManager $manager
-     * @param array $config
-     * @param array $options
+     * @param array         $config
+     * @param array         $options
      */
     public function __construct(ClientManager $manager, array $config, array $options)
     {
@@ -72,18 +71,19 @@ class Restful implements ClientContract
     }
 
     /**
-     * @param array $service
-     * @param string $uri
+     * @param array        $service
+     * @param string       $uri
      * @param array|string $params
+     *
      * @return Restful
      */
     public function call(array $service, $params = []): ClientContract
     {
         $this->client->connection([
-            'name' => $service['name'],
-            'driver' => $this->config['driver'],
-            'host' => $service['host'],
-            'port' => $service['port'],
+            'name'     => $service['name'],
+            'driver'   => $this->config['driver'],
+            'host'     => $service['host'],
+            'port'     => $service['port'],
             'settings' => array_merge($this->defaultConfig, $this->config['options'] ?? [], $this->options[$service['name']] ?? []),
         ])->handle('/', ['headers' => $this->headers, 'method' => $this->method, 'payload' => $params]);
 

@@ -2,16 +2,15 @@
 
 namespace CrCms\Microservice\Client\Services;
 
-use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use CrCms\Foundation\Client\ClientManager;
+use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Collection;
 use RangeException;
 
 /**
- * Class Swarm
- * @package CrCms\Microservice\Client\Services
+ * Class Swarm.
  */
 class Swarm implements ServiceDiscoverContract
 {
@@ -47,8 +46,9 @@ class Swarm implements ServiceDiscoverContract
 
     /**
      * Local constructor.
+     *
      * @param Container $app
-     * @param array $config
+     * @param array     $config
      */
     public function __construct(Container $app, array $config, ClientManager $clientManager, Repository $cache)
     {
@@ -61,6 +61,7 @@ class Swarm implements ServiceDiscoverContract
 
     /**
      * @param string $service
+     *
      * @return array
      */
     public function services(string $service): array
@@ -84,8 +85,8 @@ class Swarm implements ServiceDiscoverContract
         $this->client->connection([
             //'name' => 'connection_swarm',//must
             'driver' => 'http',
-            'host' => $this->config['connections']['swarm']['discover']['host'],
-            'port' => $this->config['connections']['swarm']['discover']['port'],
+            'host'   => $this->config['connections']['swarm']['discover']['host'],
+            'port'   => $this->config['connections']['swarm']['discover']['port'],
         ], false);
 
         try {
@@ -98,7 +99,7 @@ class Swarm implements ServiceDiscoverContract
 
         $content = json_decode($content, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new UnexpectedValueException("JSON parse error");
+            throw new UnexpectedValueException('JSON parse error');
         }
 
         return $content;
@@ -126,15 +127,16 @@ class Swarm implements ServiceDiscoverContract
 
     /**
      * @param array $services
+     *
      * @return array
      */
     protected function format(array $services): array
     {
         return Collection::make($services)->map(function (array $service) {
             return [
-                'id' => $service['ID'],
-                'name' => str_replace($service['Spec']['Labels']['com.docker.stack.namespace'] . '_', '', $service['Spec']['Name']),
-                'host' => str_replace($service['Spec']['Labels']['com.docker.stack.namespace'] . '_', '', $service['Spec']['Name']),
+                'id'   => $service['ID'],
+                'name' => str_replace($service['Spec']['Labels']['com.docker.stack.namespace'].'_', '', $service['Spec']['Name']),
+                'host' => str_replace($service['Spec']['Labels']['com.docker.stack.namespace'].'_', '', $service['Spec']['Name']),
                 'port' => $this->config['default_port'] ?? 28080,
             ];
         })->groupBy('name')->toArray();

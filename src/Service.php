@@ -3,7 +3,9 @@
 /**
  * @author simon <crcms@crcms.cn>
  * @datetime 2018/7/2 6:14
+ *
  * @link http://crcms.cn/
+ *
  * @copyright Copyright &copy; 2018 Rights Reserved CRCMS
  */
 
@@ -12,14 +14,13 @@ namespace CrCms\Microservice\Client;
 use CrCms\Microservice\Client\Contracts\SelectorContract;
 use CrCms\Microservice\Client\Exceptions\ServiceException;
 use CrCms\Microservice\Client\Packer\Packer;
-use GuzzleHttp\Promise\Promise;
-use Illuminate\Contracts\Container\Container;
 use DomainException;
 use Exception;
+use GuzzleHttp\Promise\Promise;
+use Illuminate\Contracts\Container\Container;
 
 /**
- * Class Service
- * @package CrCms\Microservice\Client
+ * Class Service.
  */
 class Service
 {
@@ -70,10 +71,11 @@ class Service
 
     /**
      * Service constructor.
-     * @param Container $container
-     * @param Packer $packer
+     *
+     * @param Container        $container
+     * @param Packer           $packer
      * @param SelectorContract $selector
-     * @param ServiceFactory $factory
+     * @param ServiceFactory   $factory
      */
     public function __construct(Container $container, Packer $packer, SelectorContract $selector, ServiceFactory $factory)
     {
@@ -88,7 +90,8 @@ class Service
     /**
      * @param string $service
      * @param string $uri
-     * @param array $params
+     * @param array  $params
+     *
      * @return mixed
      */
     public function call(string $service, $uri = '', array $params = [])
@@ -97,9 +100,10 @@ class Service
     }
 
     /**
-     * @param string $service
+     * @param string       $service
      * @param string|array $uri
-     * @param array $params
+     * @param array        $params
+     *
      * @return object
      */
     protected function execute(string $service, $uri = '', array $params = [])
@@ -159,9 +163,10 @@ class Service
 
     /**
      * @param null|string $driver
+     *
      * @return Service
      */
-    public function driver(?string $driver = null): Service
+    public function driver(?string $driver = null): self
     {
         $driver = $driver ? $driver : $this->app->make('config')->get('microservice-client.client');
 
@@ -177,6 +182,7 @@ class Service
 
     /**
      * @param null|string $name
+     *
      * @return Service
      */
     public function connection(?string $name = null): self
@@ -188,12 +194,13 @@ class Service
 
     /**
      * @param string $name
+     *
      * @return mixed
      */
     public function __get(string $name)
     {
         if (is_null($this->content)) {
-            return null;
+            return;
         }
 
         return $this->content->data($name);
@@ -201,7 +208,8 @@ class Service
 
     /**
      * @param string $name
-     * @param array $arguments
+     * @param array  $arguments
+     *
      * @return mixed
      */
     public function __call(string $name, array $arguments)

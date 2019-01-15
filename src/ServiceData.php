@@ -2,13 +2,12 @@
 
 namespace CrCms\Microservice\Client;
 
-use BadMethodCallException;
 use ArrayAccess;
+use BadMethodCallException;
 use UnexpectedValueException;
 
 /**
- * Class ServiceData
- * @package CrCms\Microservice\Client
+ * Class ServiceData.
  */
 class ServiceData implements ArrayAccess
 {
@@ -19,6 +18,7 @@ class ServiceData implements ArrayAccess
 
     /**
      * ServiceData constructor.
+     *
      * @param $data
      */
     public function __construct($data = null)
@@ -28,6 +28,7 @@ class ServiceData implements ArrayAccess
 
     /**
      * @param $data
+     *
      * @return object
      */
     protected function resolveData($data)
@@ -43,6 +44,7 @@ class ServiceData implements ArrayAccess
     /**
      * @param $key
      * @param null $default
+     *
      * @return mixed
      */
     public function data(string $key, $default = null)
@@ -50,11 +52,13 @@ class ServiceData implements ArrayAccess
         if (is_null($this->data)) {
             return $default;
         }
+
         return data_get($this->data, $key, $default);
     }
 
     /**
      * @param string $name
+     *
      * @return mixed|null
      */
     public function __get(string $name)
@@ -62,12 +66,11 @@ class ServiceData implements ArrayAccess
         if ($this->offsetExists($name)) {
             return $this->offsetGet($name);
         }
-
-        return null;
     }
 
     /**
      * @param mixed $offset
+     *
      * @return bool
      */
     public function offsetExists($offset): bool
@@ -81,6 +84,7 @@ class ServiceData implements ArrayAccess
 
     /**
      * @param mixed $offset
+     *
      * @return mixed|null
      */
     public function offsetGet($offset)
@@ -94,7 +98,7 @@ class ServiceData implements ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        throw new BadMethodCallException("not support method[offsetSet]");
+        throw new BadMethodCallException('not support method[offsetSet]');
     }
 
     /**
@@ -102,6 +106,6 @@ class ServiceData implements ArrayAccess
      */
     public function offsetUnset($offset)
     {
-        throw new BadMethodCallException("not support method[offsetUnset]");
+        throw new BadMethodCallException('not support method[offsetUnset]');
     }
 }
