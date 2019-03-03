@@ -3,12 +3,10 @@
 namespace CrCms\Microservice\Client\Facades;
 
 use CrCms\Microservice\Client\Service as ServiceInstance;
-use GuzzleHttp\Promise\Promise;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static object call(string $service, $uri = '', array $params = [])
- * @method static Promise callAsync(string $service, $uri = '', array $params = [])
  * @method static bool status()
  * @method static mixed getContent()
  * @method static int getStatusCode()
