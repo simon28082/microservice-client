@@ -78,7 +78,6 @@ class MicroserviceClientProvider extends ServiceProvider
         $this->registerServices();
         $this->registerCommands();
 
-        $this->app['config']->set('bridging.encryption',$this->app['config']->get('microservice-client.encryption'));
         $this->app->register(BridgingServiceProvider::class);
     }
 
