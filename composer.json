@@ -11,7 +11,7 @@
   "license": "MIT",
   "require": {
     "php": ">=7.1",
-    "illuminate/contract": "^5.5",
+    "illuminate/contracts": "^5.5",
     "illuminate/http": "^5.5",
     "illuminate/events": "^5.5",
     "illuminate/encryption": "^5.5",
