@@ -4,7 +4,7 @@ namespace CrCms\Microservice\Client\Exceptions;
 
 use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
 use CrCms\Foundation\ConnectionPool\Exceptions\RequestException;
-use CrCms\Microservice\Client\Packer\Packer;
+use CrCms\Microservice\Bridging\DataPacker;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
@@ -86,7 +86,7 @@ class ServiceException extends RuntimeException
      */
     protected function resolveMessage(string $message)
     {
-        return app(Packer::class)->unpack($message);
+        return app(DataPacker::class)->unpack($message);
     }
 
     /**

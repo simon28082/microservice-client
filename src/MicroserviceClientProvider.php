@@ -11,10 +11,9 @@
 
 namespace CrCms\Microservice\Client;
 
-use CrCms\Foundation\Client\ClientServiceProvider;
+use CrCms\Microservice\Bridging\BridgingServiceProvider;
 use CrCms\Microservice\Client\Contracts\SelectorContract;
 use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
-use CrCms\Microservice\Client\Packer\Packer;
 use CrCms\Microservice\Client\Selectors\RandSelector;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -79,7 +78,8 @@ class MicroserviceClientProvider extends ServiceProvider
         $this->registerServices();
         $this->registerCommands();
 
-        //$this->app->register(ClientServiceProvider::class);
+        $this->app['config']->set('bridging.encryption',$this->app['config']->get('microservice-client.encryption'));
+        $this->app->register(BridgingServiceProvider::class);
     }
 
     /**
@@ -93,10 +93,6 @@ class MicroserviceClientProvider extends ServiceProvider
 
         $this->app->singleton('microservice-client.selector', function ($app) {
             return new RandSelector($app['microservice-client.discover']);
-        });
-
-        $this->app->singleton('microservice-client.packer', function ($app) {
-            return new Packer($app['encrypter'], $app['config']->get('microservice-client.encryption'));
         });
 
         $this->app->singleton('microservice-client.discover', function ($app) {
@@ -130,7 +126,6 @@ class MicroserviceClientProvider extends ServiceProvider
     {
         $this->app->alias('microservice-client.discover', ServiceDiscoverContract::class);
         $this->app->alias('microservice-client.selector', SelectorContract::class);
-        $this->app->alias('microservice-client.packer', Packer::class);
     }
 
     /**
@@ -142,7 +137,6 @@ class MicroserviceClientProvider extends ServiceProvider
             ServiceDiscoverContract::class,
             SelectorContract::class,
             ServiceFactory::class,
-            Packer::class,
         ];
     }
 }
