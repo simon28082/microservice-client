@@ -2,9 +2,9 @@
 
 namespace CrCms\Microservice\Client\Services;
 
-use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Container\Container;
+use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 
 /**
  * Class Consul.
@@ -67,7 +67,7 @@ class Consul implements ServiceDiscoverContract
             $this->services = $this->all();
         }
 
-        if (!empty($this->services[$service])) {
+        if (! empty($this->services[$service])) {
             return $this->services[$service];
         }
 
@@ -107,7 +107,7 @@ class Consul implements ServiceDiscoverContract
     protected function all(): array
     {
         $services = $this->cache->get($this->cacheKey);
-        if (!empty($services)) {
+        if (! empty($services)) {
             return $services;
         }
 

@@ -2,10 +2,10 @@
 
 namespace CrCms\Microservice\Client;
 
+use InvalidArgumentException;
+use Illuminate\Contracts\Container\Container;
 use CrCms\Microservice\Client\Clients\Restful;
 use CrCms\Microservice\Client\Contracts\ClientContract;
-use Illuminate\Contracts\Container\Container;
-use InvalidArgumentException;
 
 /**
  * Class ServiceFactory.

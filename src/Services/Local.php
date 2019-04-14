@@ -2,12 +2,12 @@
 
 namespace CrCms\Microservice\Client\Services;
 
-use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Support\Collection;
-use InvalidArgumentException;
 use OutOfBoundsException;
+use InvalidArgumentException;
 use UnexpectedValueException;
+use Illuminate\Support\Collection;
+use Illuminate\Contracts\Container\Container;
+use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 
 /**
  * Class Local.
@@ -67,7 +67,7 @@ class Local implements ServiceDiscoverContract
     protected function all(): array
     {
         $path = $this->config['connections']['local']['discover']['path'];
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             throw new InvalidArgumentException("The file[{$path}] not found");
         }
 

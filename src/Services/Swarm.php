@@ -2,12 +2,12 @@
 
 namespace CrCms\Microservice\Client\Services;
 
+use RangeException;
+use Illuminate\Support\Collection;
 use CrCms\Foundation\Client\ClientManager;
-use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Support\Collection;
-use RangeException;
+use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 
 /**
  * Class Swarm.
@@ -70,7 +70,7 @@ class Swarm implements ServiceDiscoverContract
             $this->services = $this->all();
         }
 
-        if (!empty($this->services[$service])) {
+        if (! empty($this->services[$service])) {
             return $this->services[$service];
         }
 
@@ -111,7 +111,7 @@ class Swarm implements ServiceDiscoverContract
     protected function all(): array
     {
         $services = $this->cache->get($this->cacheKey);
-        if (!empty($services)) {
+        if (! empty($services)) {
             return $services;
         }
 

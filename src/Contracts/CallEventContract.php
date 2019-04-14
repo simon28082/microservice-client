@@ -2,8 +2,8 @@
 
 namespace CrCms\Microservice\Client\Contracts;
 
-use CrCms\Microservice\Client\Service;
 use Exception;
+use CrCms\Microservice\Client\Service;
 
 /**
  * Interface CallEventContract.

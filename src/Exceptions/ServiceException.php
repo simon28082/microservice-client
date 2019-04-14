@@ -2,12 +2,12 @@
 
 namespace CrCms\Microservice\Client\Exceptions;
 
-use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
-use CrCms\Foundation\ConnectionPool\Exceptions\RequestException;
-use CrCms\Microservice\Bridging\DataPacker;
 use Exception;
-use Illuminate\Http\JsonResponse;
 use RuntimeException;
+use Illuminate\Http\JsonResponse;
+use CrCms\Microservice\Bridging\DataPacker;
+use CrCms\Foundation\ConnectionPool\Exceptions\RequestException;
+use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
 
 /**
  * Class ServiceException.

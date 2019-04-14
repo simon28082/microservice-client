@@ -2,8 +2,8 @@
 
 namespace CrCms\Microservice\Client\Facades;
 
-use CrCms\Microservice\Client\Service as ServiceInstance;
 use Illuminate\Support\Facades\Facade;
+use CrCms\Microservice\Client\Service as ServiceInstance;
 
 /**
  * @method static object call(string $service, $uri = '', array $params = [])
