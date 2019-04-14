@@ -11,13 +11,12 @@
 
 namespace CrCms\Microservice\Client;
 
-use CrCms\Microservice\Client\Contracts\SelectorContract;
-use CrCms\Microservice\Client\Exceptions\ServiceException;
-use CrCms\Microservice\Client\Packer\Packer;
 use DomainException;
 use Exception;
-use GuzzleHttp\Promise\Promise;
+use CrCms\Microservice\Bridging\DataPacker;
 use Illuminate\Contracts\Container\Container;
+use CrCms\Microservice\Client\Contracts\SelectorContract;
+use CrCms\Microservice\Client\Exceptions\ServiceException;
 
 /**
  * Class Service.
@@ -35,7 +34,7 @@ class Service
     protected $selector;
 
     /**
-     * @var Packer
+     * @var DataPacker
      */
     protected $packer;
 
@@ -65,19 +64,14 @@ class Service
     protected $connection;
 
     /**
-     * @var Promise
-     */
-    protected $promise;
-
-    /**
      * Service constructor.
      *
      * @param Container        $container
-     * @param Packer           $packer
+     * @param DataPacker           $packer
      * @param SelectorContract $selector
      * @param ServiceFactory   $factory
      */
-    public function __construct(Container $container, Packer $packer, SelectorContract $selector, ServiceFactory $factory)
+    public function __construct(Container $container, DataPacker $packer, SelectorContract $selector, ServiceFactory $factory)
     {
         $this->app = $container;
         $this->factory = $factory;
@@ -88,25 +82,13 @@ class Service
     }
 
     /**
-     * @param string $service
-     * @param string $uri
-     * @param array  $params
-     *
-     * @return mixed
-     */
-    public function call(string $service, $uri = '', array $params = [])
-    {
-        return $this->execute($service, $uri, $params);
-    }
-
-    /**
      * @param string       $service
      * @param string|array $uri
      * @param array        $params
      *
      * @return object
      */
-    protected function execute(string $service, $uri = '', array $params = [])
+    public function call(string $service, $uri = '', array $params = [])
     {
         if (is_array($uri) || empty($uri)) {
             $params = $uri ? $uri : [];
