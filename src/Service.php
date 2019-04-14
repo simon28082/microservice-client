@@ -11,8 +11,8 @@
 
 namespace CrCms\Microservice\Client;
 
-use DomainException;
 use Exception;
+use DomainException;
 use CrCms\Microservice\Bridging\DataPacker;
 use Illuminate\Contracts\Container\Container;
 use CrCms\Microservice\Client\Contracts\SelectorContract;
@@ -153,7 +153,7 @@ class Service
         $driver = $driver ? $driver : $this->app->make('config')->get('microservice-client.client');
 
         $connections = array_keys($this->app->make('config')->get('microservice-client.clients'));
-        if (!in_array($driver, $connections, true)) {
+        if (! in_array($driver, $connections, true)) {
             throw new DomainException("The Driver[{$driver}] not exists");
         }
 

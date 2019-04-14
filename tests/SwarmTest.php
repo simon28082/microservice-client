@@ -2,11 +2,11 @@
 
 namespace CrCms\Microservice\Client\Tests;
 
-use CrCms\Microservice\Client\Services\Swarm;
-use Illuminate\Cache\NullStore;
-use Illuminate\Cache\Repository;
 use Mockery\Mock;
+use Illuminate\Cache\NullStore;
 use PHPUnit\Framework\TestCase;
+use Illuminate\Cache\Repository;
+use CrCms\Microservice\Client\Services\Swarm;
 
 /**
  * Class SwarmTest.

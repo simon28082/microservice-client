@@ -11,13 +11,13 @@
 
 namespace CrCms\Microservice\Client;
 
+use Laravel\Lumen\Application;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\ServiceProvider;
+use CrCms\Microservice\Client\Selectors\RandSelector;
 use CrCms\Microservice\Bridging\BridgingServiceProvider;
 use CrCms\Microservice\Client\Contracts\SelectorContract;
 use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
-use CrCms\Microservice\Client\Selectors\RandSelector;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
-use Laravel\Lumen\Application;
 
 /**
  * Class MicroServiceProvider.

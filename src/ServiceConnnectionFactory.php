@@ -2,12 +2,12 @@
 
 namespace CrCms\Microservice\Client;
 
-use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
-use CrCms\Microservice\Client\Services\Consul;
+use InvalidArgumentException;
 use CrCms\Microservice\Client\Services\Local;
 use CrCms\Microservice\Client\Services\Swarm;
 use Illuminate\Contracts\Container\Container;
-use InvalidArgumentException;
+use CrCms\Microservice\Client\Services\Consul;
+use CrCms\Microservice\Client\Contracts\ServiceDiscoverContract;
 
 /**
  * Class ServiceConnnectionFactory.

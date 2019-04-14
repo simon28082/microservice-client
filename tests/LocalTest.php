@@ -2,8 +2,8 @@
 
 namespace CrCms\Microservice\Client\Tests;
 
-use CrCms\Microservice\Client\Services\Local;
 use PHPUnit\Framework\TestCase;
+use CrCms\Microservice\Client\Services\Local;
 
 /**
  * Class LocalTest.
